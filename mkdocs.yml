@@ -1,0 +1,16 @@
+site_name: Standard Occupational Classification Library
+nav:
+  - Home: index.md
+  - Guide: guide.md
+  - API Reference:
+    - Overview: reference.md
+    - Lookup Module: lookup.md
+    - Classification Metadata: classification_meta.md
+    - SIC Metadata: soc_meta.md
+  - Example Data: example_data.md
+theme:
+  name: material  # Optional, you can change it
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
