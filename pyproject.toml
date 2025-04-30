@@ -12,6 +12,9 @@ packages = [{ include = "occupational_classification", from = "src" }]
 python = "^3.12"
 pydantic = "^2.10.6"
 pandas = "^2.2.3"
+toml = "^0.10.2"
+pyprojroot = "^0.3.0"
+openpyxl = "^3.1.5"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -28,6 +31,7 @@ pre-commit = "^4.2.0"
 mkdocs = "^1.6.1"
 mkdocstrings = "^0.29.0"
 mkdocstrings-python = "^1.16.7"
+ipykernel = "^6.29.5"
 
 [tool.isort]
 profile = "black"

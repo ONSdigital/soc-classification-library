@@ -1,11 +1,9 @@
 """Provide data access for key files.
 
-Filepaths are provided in config: "sic_soc_llm._config".
+Filepaths are provided in config: "src/occupational_classification/_config".
 """
 
 import pandas as pd
-
-print("Hellooooooooooooooooooooo")
 
 
 def load_soc_index(filepath: str) -> pd.DataFrame:
