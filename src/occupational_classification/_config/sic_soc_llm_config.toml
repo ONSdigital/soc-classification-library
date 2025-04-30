@@ -1,0 +1,20 @@
+[sic_soc_data]
+
+[lookups]
+sic_structure = "notebooks/publisheduksicsummaryofstructureworksheet.xlsx"
+# https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/ukstandardindustrialclassificationofeconomicactivities/uksic2007/publisheduksicsummaryofstructureworksheet.xlsx
+sic_index = "notebooks/uksic2007indexeswithaddendumdecember2022newformatsept20241.xlsx"
+# https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/ukstandardindustrialclassificationofeconomicactivities/uksic2007/uksic2007indexeswithaddendumdecember2022newformatsept20241.xlsx
+
+soc_structure = "notebooks/data/soc_data/soc2020volume1structureanddescriptionofunitgroupsexcel16102024.xlsx"
+
+soc_index = "notebooks/data/soc_data/soc2020volume2thecodingindexexcel16102024.xlsx"
+
+sic_condensed = "sic_2d_condensed.txt"
+soc_condensed = "soc_4d_condensed.txt"
+coicop_condensed = "coicop_5d_condensed.txt"
+[llm]
+db_dir = "data/sic-index/db"
+soc_dir = "soc_data/soc_index/db"
+embedding_model_name = "all-MiniLM-L6-v2"  # all-mpnet-base-v2
+llm_model_name = "gemini-pro"  # "gpt-4"
