@@ -1,0 +1,11 @@
+[sic_soc_data]
+
+[lookups]
+soc_structure = "src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx"
+# https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume1structureanddescriptionsofunitgroups/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx
+
+soc_index = "src/occupational_classification/data/soc2020volume2thecodingindexexcel16042025.xlsx"
+# https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume2codingrulesandconventions/soc2020volume2thecodingindexexcel16042025.xlsx
+
+soc_condensed = "soc_4d_condensed.txt"
+coicop_condensed = "coicop_5d_condensed.txt"
