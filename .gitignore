@@ -80,6 +80,20 @@ target/
 # Disallow notebooks
 *.ipynb 
 
+# Excel datafiles & workbooks & macros
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.xltx
+*.xltm
+*.xlt
+*.xlam
+*.xla
+*.xlw
+*.xlr
+*.xlc
+
 
 # IPython
 profile_default/
