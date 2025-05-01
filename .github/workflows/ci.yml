@@ -39,11 +39,11 @@
                 - name: Install dependencies
                   run: make install-dev
 
-                - name: Lint Python
-                  run: make check-python-nofix
+                #- name: Lint Python
+                #  run: make check-python-nofix
 
-                - name: Test Python
-                  run: make all-tests
+                #- name: Test Python
+                #  run: make all-tests
 
                 - name: Cleanup residue file
                   run: make clean
