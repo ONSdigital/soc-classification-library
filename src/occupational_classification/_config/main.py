@@ -2,7 +2,7 @@
 
 Usage:
     ```
-    from sic_soc_llm import get_config
+    from occupational_classification import get_config
     config = get_config()
     config.CONFIG_NAME
     ```
@@ -22,7 +22,7 @@ _config = None
 
 
 def check_file_exists(
-    file_name: Optional[Union[Path, str]] = "sic_soc_llm_config.toml",
+    file_name: Optional[Union[Path, str]] = "sa_soc_config.toml",
 ) -> Path:
     """Check if the file exists.
 
@@ -53,16 +53,18 @@ def check_file_exists(
     elif (Path.home() / file_path).exists():
         return Path.home() / file_path
     # check whether the file exists in the package resources
-    elif (resources.files("sic_soc_llm._config") / file_path).exists():
-        return resources.files("sic_soc_llm._config") / file_path
-    elif (resources.files("sic_soc_llm.example_data") / file_path).exists():
-        return resources.files("sic_soc_llm.example_data") / file_path
+    elif (resources.files("occupational_classification._config") / file_path).exists():
+        return resources.files("occupational_classification._config") / file_path
+    elif (
+        resources.files("occupational_classification.example_data") / file_path
+    ).exists():
+        return resources.files("occupational_classification.example_data") / file_path
     else:
         return None
 
 
 def get_config(
-    config_name: Optional[Union[Path, str]] = "sic_soc_llm_config.toml",
+    config_name: Optional[Union[Path, str]] = "sa_soc_config.toml",
 ) -> dict:
     """Fetch the configuration.
 
@@ -70,7 +72,7 @@ def get_config(
 
     Args:
         config_name (Path or str, optional): The name of the config file to load.
-            Defaults to relative path "sic_soc_llm_config.toml" - in such case it
+            Defaults to relative path "occupational_classification_config.toml" - in such case it
             looks for the config file in 1. current dir, 2. project dir, 3. user home
             and 4. package resources.
 
@@ -94,7 +96,7 @@ def get_config(
             for key, lookup_file in in_config["lookups"].items():
                 lookup_file_path = check_file_exists(lookup_file)
                 if lookup_file_path is None:
-                    if key in ["sic_condensed", "soc_condensed"]:
+                    if key in ["soc_condensed"]:
                         raise FileNotFoundError(
                             f"Required lookup file {key}: {lookup_file} not found."
                         )
