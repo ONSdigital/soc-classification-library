@@ -19,7 +19,7 @@ check-python: ## Format the python code (auto fix)
 	poetry run ruff check . --fix
 	poetry run mypy --follow-untyped-imports src
 	poetry run pylint --verbose .
-	poetry run bandit -r src/industrial_classification
+	poetry run bandit -r src/occupational_classification
 
 check-python-nofix: ## Format the python code (no fix)
 	poetry run isort . --check --verbose
@@ -27,16 +27,16 @@ check-python-nofix: ## Format the python code (no fix)
 	poetry run ruff check .
 	poetry run mypy --follow-untyped-imports src
 	poetry run pylint --verbose .
-	poetry run bandit -r src/industrial_classification
+	poetry run bandit -r src/occupational_classification
 
 black: ## Run black
 	poetry run black .
 
 sic-lookup-tests:  # Allowing 75% coverage for lookup for initial commit
-	poetry run pytest -m sic_lookup  --cov=src/industrial_classification/lookup --cov-report=term-missing --cov-fail-under=75 --cov-config=.coveragerc
+	poetry run pytest -m sic_lookup  --cov=src/occupational_classification/lookup --cov-report=term-missing --cov-fail-under=75 --cov-config=.coveragerc
 
 sic-meta-tests:
-	poetry run pytest -m sic_meta  --cov=src/industrial_classification/meta --cov-report=term-missing --cov-fail-under=80 --cov-config=.coveragerc
+	poetry run pytest -m sic_meta  --cov=src/occupational_classification/meta --cov-report=term-missing --cov-fail-under=80 --cov-config=.coveragerc
 
 all-tests:
 	poetry run pytest  --cov=. --cov-report=term-missing --cov-fail-under=80 --cov-config=.coveragerc
