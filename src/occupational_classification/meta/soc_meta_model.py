@@ -13,8 +13,6 @@ from typing import Optional  # list for list for tasks
 
 from pydantic import BaseModel, Field
 
-from occupational_classification.utils.constants import SOC_CODE_LENGTH
-
 
 class ClassificationMeta(BaseModel):
     """Represents a classification meta model.
@@ -51,20 +49,3 @@ class ClassificationMeta(BaseModel):
         description="""An optional string with a list of tasks for the group.
         Applies only for Unit Group (4 digit code)""",
     )
-
-    def pretty_print(self):
-        """Prints information associated with SOC code.
-
-        Returns:
-            str: string that contains all information regarding SOC code.
-        """
-        code = self.code
-        if len(code) < SOC_CODE_LENGTH:
-            out = "Code: " + code + " Title: " + self.soc2020_group_title + "."
-            if self.group_description:
-                out += " Description: " + self.group_description
-            if self.tasks:
-                out += " Tasks: " + self.tasks + "."
-        else:
-            out = ""
-        return out
