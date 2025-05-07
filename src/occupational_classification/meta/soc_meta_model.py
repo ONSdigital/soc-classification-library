@@ -9,7 +9,7 @@ Classes:
     ClassificationMeta: A Pydantic model for occupational classification metadata.
 """
 
-from typing import Optional  # list for list for tasks
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
