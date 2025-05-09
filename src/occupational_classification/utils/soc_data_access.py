@@ -5,6 +5,7 @@ Filepaths are provided in config: "src.occupational_classification._config".
 
 import pandas as pd
 
+
 def combine_job_title(row: pd.DataFrame) -> str:
     """Produces full job title wih IND and ADD qualifiers.
 
@@ -15,14 +16,13 @@ def combine_job_title(row: pd.DataFrame) -> str:
     Returns:
         A string with combined full job title.
     """
-    for i in range(1):
-        print(type(row))
     job_title = row["natural_word"]
     if pd.notna(row["add"]):
         job_title = f"{row['add']} " + job_title
     if pd.notna(row["ind"]):
         job_title += f" ({row['ind']})"
     return job_title
+
 
 def load_soc_index(filepath: str) -> pd.DataFrame:
     """Load SOC index.
