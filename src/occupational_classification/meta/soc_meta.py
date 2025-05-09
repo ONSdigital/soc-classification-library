@@ -1,15 +1,15 @@
-"""Module for the 'soc_meta' class.
+"""Module for the 'SocDB' class.
 
-This module defines the 'soc_meta' class, which makes necessary changes to the
+This module defines the 'SocDB' class, which makes necessary changes to the
 structure of the data being passed (soc_structure).
 """
 
 import pandas as pd
 
-from occupational_classification.meta.soc_meta_model import ClassificationMeta
+from occupational_classification.meta.classification_meta import ClassificationMeta
 
 
-class soc_meta:
+class SocDB:
     """Loads data from the config file.
 
     Converts group level into one column, based on the length of the code.
@@ -19,6 +19,8 @@ class soc_meta:
 
     def __init__(self, df):
         self.df = df
+
+        # soc_meta = self.create_soc_dataframe()
 
     def code_selection(self, soc_dict: dict) -> dict:
         """Selects the meaningful 1, 2, 3, or 4 digit long code.
@@ -68,4 +70,40 @@ class soc_meta:
 
     def create_soc_dataframe(self) -> pd.DataFrame:
         """Takes a list of dictionaries and converts to a dataframe."""
-        return pd.DataFrame(soc_meta(self).create_soc_dictionary())
+        return pd.DataFrame(SocDB(self).create_soc_dictionary())
+
+
+class SocMeta:
+    def __init__(self, df):
+        self.df = df
+        self.soc_meta = SocDB(df).create_soc_dictionary()
+
+    def get_meta_by_code(self, code: str) -> dict:
+        """Retrieve title and detail for a given SOC code.
+
+        Args:
+            code (str): A 2 or 4 digit SIC code to lookup.
+
+        Returns:
+            dict: Dictionary with title and detail if found, else an error message.
+        """
+        # Check if code is 2 digits and add xxx if so
+        # if len(code) == 2:
+        #     code = f"{code}xx"
+
+        # Look for the code in the metadata
+
+        for element in self.soc_meta:
+            if element["code"].startswith(code):
+                return {
+                    "code": element.get("code", None),
+                    "group title": element.get("soc2020_group_title", None),
+                    "group description": element.get("group_description", None),
+                    "typical entry routes and associated qualifications": element.get(
+                        "tasks", []
+                    ),
+                    "tasks": element.get("qualifications", []),
+                }
+
+        # No match found
+        return {"error": f"No metadata found for SIC code {code}"}
