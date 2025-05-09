@@ -22,8 +22,6 @@ class SocDB:
     def __init__(self, df):
         self.df = df
 
-        # soc_meta = self.create_soc_dataframe()
-
     def code_selection(self, soc_dict: dict) -> dict:
         """Selects the meaningful 1, 2, 3, or 4 digit long code.
             Aggregates into one column "code".
