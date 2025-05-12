@@ -154,10 +154,11 @@ class SOCLookup:
         self, code: str
     ) -> dict[str, Optional[Union[str, dict[str, Any]]]]:
         """Retrieve code major group from SOC code.
-        
+
         Returns:
             dict[str, dict[str, Any]]: A dictionary containing
-            the matching Major Group SOC code and Major Group metadata."""
+            the matching Major Group SOC code and Major Group metadata.
+        """
         matching_code_meta: Optional[dict[str, Any]] = self.meta.get_meta_by_code(code)
         major_group_meta: Optional[dict[str, Any]] = None
         matching_code_major_group: Optional[str] = None
@@ -173,8 +174,10 @@ class SOCLookup:
         self, soc_candidates: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
         """Retrieve unique code divisions from SOC candidates.
+
         Returns:
-            list: Major group metadata."""
+            list: Major group metadata.
+        """
         unique_major_group: dict[str, dict[str, Any]] = {}
 
         for candidate in soc_candidates:
