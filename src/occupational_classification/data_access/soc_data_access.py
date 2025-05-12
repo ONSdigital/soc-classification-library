@@ -6,11 +6,11 @@ Filepaths are provided in config: "src.occupational_classification._config".
 import pandas as pd
 
 
-def combine_job_title(row: pd.DataFrame) -> str:
+def combine_job_title(row: pd.Series) -> str:
     """Produces full job title wih IND and ADD qualifiers.
 
     Args:
-        row (pd.DataFrame): A row containing job title, IND and ADD qualifiers
+        row (pd.Series): A row containing job title, IND and ADD qualifiers
         for a specific SOC code.
 
     Returns:
