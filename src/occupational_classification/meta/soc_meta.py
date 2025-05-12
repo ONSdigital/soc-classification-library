@@ -81,9 +81,9 @@ class SocMeta:
         soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
     """
 
-    def __init__(self, df):
+    def __init__(self, df: pd.DataFrame):
         self.df = df
-        self.soc_meta = SocDB(df).create_soc_dictionary()
+        self.soc_meta = SocDB(self.df).create_soc_dictionary()
 
     def get_meta_by_code(self, code: str) -> dict:
         """Retrieve title and detail for a given SOC code.
