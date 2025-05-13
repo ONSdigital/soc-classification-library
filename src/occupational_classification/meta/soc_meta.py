@@ -8,6 +8,7 @@ for given SOC codes.
 
 import pandas as pd
 
+from occupational_classification.data_access.soc_data_access import load_soc_structure
 from occupational_classification.meta.classification_meta import ClassificationMeta
 
 
@@ -81,8 +82,11 @@ class SocMeta:
         soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
     """
 
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
+    def __init__(
+        self,
+        data_path: str = "../src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
+    ):
+        self.df = load_soc_structure(data_path)
         self.soc_meta = SocDB(self.df).create_soc_dictionary()
 
     def get_meta_by_code(self, code: str) -> dict:

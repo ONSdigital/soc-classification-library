@@ -18,7 +18,7 @@ from occupational_classification.data_access.soc_data_access import (
     load_soc_structure,
 )
 from occupational_classification.hierarchy.soc_hierarchy import load_hierarchy
-from occupational_classification.meta.soc_meta import SocDB
+from occupational_classification.meta.soc_meta import SocDB, SocMeta
 
 UNIT_CODE_LEN = 4
 
@@ -45,13 +45,12 @@ class SOCLookup:
         Args:
             data_path (str): The path to the CSV file containing SOC data.
         """
-        # Load data and store descriptions in lowercase
         self.soc_df: pd.DataFrame = load_soc_index(data_path)
         self.data = self.data_preparation()
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
-        # self.meta: SocMeta = SocMeta(self.soc_df)
+        self.meta: SocMeta = SocMeta()
 
     def data_preparation(self):
         """Converts the data for useful format for lookup method.
