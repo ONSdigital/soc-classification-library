@@ -99,7 +99,7 @@ class SocMeta:
             dict: Dictionary with title and detail if found, else an error message.
         """
         for element in self.soc_meta:
-            if element["code"].startswith(code):
+            if element["code"] == code:
                 return {
                     "code": element.get("code", None),
                     "group title": element.get("soc2020_group_title", None),
