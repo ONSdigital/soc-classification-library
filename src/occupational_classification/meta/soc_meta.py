@@ -1,7 +1,9 @@
-"""Module for the 'SocDB' class.
+"""Module for the 'SocDB' class and 'SocMeta' class.
 
 This module defines the 'SocDB' class, which makes necessary changes to the
 structure of the data being passed (soc_structure).
+This module defines the 'SocMeta' class, which retrieves titles and details
+for given SOC codes.
 """
 
 import pandas as pd
@@ -19,8 +21,6 @@ class SocDB:
 
     def __init__(self, df):
         self.df = df
-
-        # soc_meta = self.create_soc_dataframe()
 
     def code_selection(self, soc_dict: dict) -> dict:
         """Selects the meaningful 1, 2, 3, or 4 digit long code.
@@ -74,25 +74,26 @@ class SocDB:
 
 
 class SocMeta:
-    def __init__(self, df):
+    """SOC Meta data model class for SOC codes and their descriptions
+    build based on java dictionary from onsdigital repo.
+
+    Attributes:
+        soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
+    """
+
+    def __init__(self, df: pd.DataFrame):
         self.df = df
-        self.soc_meta = SocDB(df).create_soc_dictionary()
+        self.soc_meta = SocDB(self.df).create_soc_dictionary()
 
     def get_meta_by_code(self, code: str) -> dict:
         """Retrieve title and detail for a given SOC code.
 
         Args:
-            code (str): A 2 or 4 digit SIC code to lookup.
+            code (str): A SOC code to lookup.
 
         Returns:
             dict: Dictionary with title and detail if found, else an error message.
         """
-        # Check if code is 2 digits and add xxx if so
-        # if len(code) == 2:
-        #     code = f"{code}xx"
-
-        # Look for the code in the metadata
-
         for element in self.soc_meta:
             if element["code"].startswith(code):
                 return {
@@ -106,4 +107,4 @@ class SocMeta:
                 }
 
         # No match found
-        return {"error": f"No metadata found for SIC code {code}"}
+        return {"error": f"No metadata found for SOC code {code}"}
