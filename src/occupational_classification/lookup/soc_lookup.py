@@ -209,14 +209,14 @@ class SOCRephraseLookup:
     ):
         self.data_path_structure = data_path_structure
         self.data_path_index = data_path_index
-        self.data: pd.DataFrame = self.access_data()
+        self.data: pd.DataFrame = self.access_hierarchy()
 
         # Create a lookup dictionary for quick access
         self.lookup_dict: dict[str, str] = self.data.set_index("soc_code")[
             "input_description"
         ].to_dict()
 
-    def access_data(self):
+    def access_hierarchy(self):
         """Converts the data for useful format for lookup method.
 
         Returns:
