@@ -18,7 +18,7 @@ from occupational_classification.data_access.soc_data_access import (
     load_soc_structure,
 )
 from occupational_classification.hierarchy.soc_hierarchy import load_hierarchy
-from occupational_classification.meta.soc_meta import SocDB, SocMeta
+from occupational_classification.meta.soc_meta import SocDB
 
 UNIT_CODE_LEN = 4
 
@@ -38,7 +38,7 @@ class SOCLookup:
 
     def __init__(
         self,
-        data_path: str = "../src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
+        data_path: str = "../src/occupational_classification/data/soc2020volume2thecodingindexexcel16042025.xlsx",
     ):
         """Initialises the SOCLookup class by loading SOC data from a CSV file.
 
@@ -46,33 +46,24 @@ class SOCLookup:
             data_path (str): The path to the CSV file containing SOC data.
         """
         # Load data and store descriptions in lowercase
-        self.soc_df: pd.DataFrame = load_soc_structure(data_path)
+        self.soc_df: pd.DataFrame = load_soc_index(data_path)
         self.data = self.data_preparation()
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
-        self.meta: SocMeta = SocMeta(self.soc_df)
+        # self.meta: SocMeta = SocMeta(self.soc_df)
 
-    def data_preparation(self) -> pd.DataFrame:
+    def data_preparation(self):
         """Converts the data for useful format for lookup method.
 
         Returns:
             pd.DataFrame: A DataFrame containing data useful for lookups.
         """
-        data: pd.DataFrame = SocDB.create_soc_dataframe(self.soc_df)
+        soc_df = self.soc_df.copy()
+        data: pd.DataFrame = soc_df
         data["label"] = data["code"]
-        data["description"] = data["soc2020_group_title"].str.lower()
-        columns_to_drop = [
-            "code",
-            "soc2020_group_title",
-            "group_description",
-            "qualifications",
-            "tasks",
-        ]
-        data = data.drop(columns_to_drop, axis=1)
-        data = data[data["label"].astype(str).str.len() == UNIT_CODE_LEN].reset_index(
-            drop=True
-        )
+        data["description"] = data["title"].str.lower()
+        data = data.drop(["title", "code"], axis=1)
         return data
 
     def lookup(self, description: str, similarity: bool = False) -> dict[str, Any]:
