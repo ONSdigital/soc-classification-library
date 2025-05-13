@@ -84,27 +84,3 @@ class SocMeta:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.soc_meta = SocDB(self.df).create_soc_dictionary()
-
-    def get_meta_by_code(self, code: str) -> dict:
-        """Retrieve title and detail for a given SOC code.
-
-        Args:
-            code (str): A SOC code to lookup.
-
-        Returns:
-            dict: Dictionary with title and detail if found, else an error message.
-        """
-        for element in self.soc_meta:
-            if element["code"].startswith(code):
-                return {
-                    "code": element.get("code", None),
-                    "group title": element.get("soc2020_group_title", None),
-                    "group description": element.get("group_description", None),
-                    "typical entry routes and associated qualifications": element.get(
-                        "tasks", []
-                    ),
-                    "tasks": element.get("qualifications", []),
-                }
-
-        # No match found
-        return {"error": f"No metadata found for SOC code {code}"}
