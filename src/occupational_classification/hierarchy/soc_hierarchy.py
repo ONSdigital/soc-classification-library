@@ -283,21 +283,10 @@ def _populate_job_titles(nodes: list, soc_index: pd.DataFrame):
     """Populate job titles. Modifies nodes in places."""
     for node in nodes:
         if SocCode(node.soc_code).code_length() == _SOC_CODE_LENGTH:
-            filtered_index = soc_index[soc_index["soc_2020"] == str(node.soc_code)]
+            filtered_index = soc_index[soc_index["code"] == str(node.soc_code)]
 
             for _index, row in filtered_index.iterrows():
-
-                job_title = ""
-
-                if pd.notna(row["add"]):
-                    job_title += f"{row['add']} "
-
-                job_title += row["natural_word"]
-
-                if pd.notna(row["ind"]):
-                    job_title += f" ({row['ind']})"
-
-                node.job_titles.append(job_title)
+                node.job_titles.append(row["title"])
 
 
 def is_leaf_code(code) -> bool:
