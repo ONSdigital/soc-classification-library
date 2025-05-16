@@ -106,9 +106,9 @@ class SocMeta:
                     "group title": element.get("soc2020_group_title", None),
                     "group description": element.get("group_description", None),
                     "typical entry routes and associated qualifications": element.get(
-                        "tasks", []
+                        "qualifications", []
                     ),
-                    "tasks": element.get("qualifications", []),
+                    "tasks": element.get("tasks", []),
                 }
 
         # No match found
