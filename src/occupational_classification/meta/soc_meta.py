@@ -75,10 +75,11 @@ class SocDB:
 
 
 class SocMeta:
-    """SOC Meta data model class for SOC codes and their descriptions
-    build based on java dictionary from onsdigital repo.
+    """SOC Meta data model class for SOC codes and their desriptions.
+    Load and manage data related to SOC codes.
 
     Attributes:
+        df (pd.DataFrame): DataFrame containing data for SOC structure.
         soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
     """
 
@@ -90,7 +91,7 @@ class SocMeta:
         self.soc_meta = SocDB(self.df).create_soc_dictionary()
 
     def get_meta_by_code(self, code: str) -> dict:
-        """Retrieve title and detail for a given SOC code.
+        """Retrieve title and details for a given SOC code.
 
         Args:
             code (str): A SOC code to lookup.
@@ -99,15 +100,15 @@ class SocMeta:
             dict: Dictionary with title and detail if found, else an error message.
         """
         for element in self.soc_meta:
-            if element["code"].startswith(code):
+            if element["code"] == code:
                 return {
                     "code": element.get("code", None),
                     "group title": element.get("soc2020_group_title", None),
                     "group description": element.get("group_description", None),
                     "typical entry routes and associated qualifications": element.get(
-                        "tasks", []
+                        "qualifications", []
                     ),
-                    "tasks": element.get("qualifications", []),
+                    "tasks": element.get("tasks", []),
                 }
 
         # No match found
