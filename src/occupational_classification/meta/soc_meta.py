@@ -1,15 +1,17 @@
-"""Module for the 'soc_meta' class.
+"""Module for the 'SocDB' class and 'SocMeta' class.
 
-This module defines the 'soc_meta' class, which makes necessary changes to the
+This module defines the 'SocDB' class, which makes necessary changes to the
 structure of the data being passed (soc_structure).
+This module defines the 'SocMeta' class, which retrieves titles and details
+for given SOC codes.
 """
 
 import pandas as pd
 
-from occupational_classification.meta.soc_meta_model import ClassificationMeta
+from occupational_classification.meta.classification_meta import ClassificationMeta
 
 
-class soc_meta:
+class SocDB:
     """Loads data from the config file.
 
     Converts group level into one column, based on the length of the code.
@@ -68,4 +70,17 @@ class soc_meta:
 
     def create_soc_dataframe(self) -> pd.DataFrame:
         """Takes a list of dictionaries and converts to a dataframe."""
-        return pd.DataFrame(soc_meta(self).create_soc_dictionary())
+        return pd.DataFrame(SocDB(self).create_soc_dictionary())
+
+
+class SocMeta:
+    """SOC Meta data model class for SOC codes and their descriptions
+    build based on java dictionary from onsdigital repo.
+
+    Attributes:
+        soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
+    """
+
+    def __init__(self, df: pd.DataFrame):
+        self.df = df
+        self.soc_meta = SocDB(self.df).create_soc_dictionary()
