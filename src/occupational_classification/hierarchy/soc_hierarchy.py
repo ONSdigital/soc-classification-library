@@ -248,8 +248,8 @@ def _define_codes_and_nodes(soc_df: pd.DataFrame):
     code_node_dict = {}
 
     for code in soc_df["code"]:
-        group_description = soc_meta.get_meta_by_code("1")["group description"]
-        group_title = soc_meta.get_meta_by_code("1")["group title"]
+        group_description = soc_meta.get_meta_by_code(code)["group description"]
+        group_title = soc_meta.get_meta_by_code(code)["group title"]
         soc_node = SocNode(code, group_title=group_title, group_description=group_description)
 
         codes.append(code)
