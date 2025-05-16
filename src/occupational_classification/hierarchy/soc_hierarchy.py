@@ -6,6 +6,8 @@ Usage: provides information regarding the specified code.
 
 import pandas as pd
 
+from occupational_classification.meta.soc_meta import SocMeta
+
 _LEVEL_DICT = {1: "Major", 2: "Sub-Major", 3: "Minor", 4: "Unit"}
 _SOC_CODE_LENGTH = 4
 
@@ -239,17 +241,16 @@ def _define_codes_and_nodes(soc_df: pd.DataFrame):
     """Creates codes list, nodes list and code_node_dict dictionary,
     later used for SOC.
     """
+    soc_meta = SocMeta()
     codes = []
     nodes = []
 
     code_node_dict = {}
 
-    for code, group_title, group_description in soc_df[
-        ["code", "soc2020_group_title", "group_description"]
-    ].itertuples(index=False, name=None):
-        soc_node = SocNode(
-            code, group_description=group_description, group_title=group_title
-        )
+    for code in soc_df["code"]:
+        group_description = soc_meta.get_meta_by_code("1")["group description"]
+        group_title = soc_meta.get_meta_by_code("1")["group title"]
+        soc_node = SocNode(code, group_title=group_title, group_description=group_description)
 
         codes.append(code)
         nodes.append(soc_node)
