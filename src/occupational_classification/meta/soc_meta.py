@@ -8,6 +8,7 @@ for given SOC codes.
 
 import pandas as pd
 
+from occupational_classification.data_access.soc_data_access import load_soc_structure
 from occupational_classification.meta.classification_meta import ClassificationMeta
 
 
@@ -74,13 +75,41 @@ class SocDB:
 
 
 class SocMeta:
-    """SOC Meta data model class for SOC codes and their descriptions
-    build based on java dictionary from onsdigital repo.
+    """SOC Meta data model class for SOC codes and their desriptions.
+    Load and manage data related to SOC codes.
 
     Attributes:
+        df (pd.DataFrame): DataFrame containing data for SOC structure.
         soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
     """
 
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
+    def __init__(
+        self,
+        data_path: str = "../src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
+    ):
+        self.df = load_soc_structure(data_path)
         self.soc_meta = SocDB(self.df).create_soc_dictionary()
+
+    def get_meta_by_code(self, code: str) -> dict:
+        """Retrieve title and details for a given SOC code.
+
+        Args:
+            code (str): A SOC code to lookup.
+
+        Returns:
+            dict: Dictionary with title and detail if found, else an error message.
+        """
+        for element in self.soc_meta:
+            if element["code"] == code:
+                return {
+                    "code": element.get("code", None),
+                    "group_title": element.get("soc2020_group_title", None),
+                    "group_description": element.get("group_description", None),
+                    "entry_routes_and_quals": element.get(
+                        "qualifications", []
+                    ),
+                    "tasks": element.get("tasks", []),
+                }
+
+        # No match found
+        return {"error": f"No metadata found for SOC code {code}"}
