@@ -276,7 +276,7 @@ def _populate_tasks_and_quals(nodes: list):
         code = node.soc_code
         if SocCode(code).code_length() == _SOC_CODE_LENGTH:
             qual = soc_meta.get_meta_by_code(code)[
-                "typical_entry_routes_and_associated_qualifications"
+                "entry_routes_and_quals"
             ]
             node.qualifications = qual
 
