@@ -8,7 +8,7 @@ SOC classification library, utilities used to classify occupation code based off
 
 ## Features
 
-- SOC Lookup.  A utility that uses a well-known set of SOC mappings of ${\small\color{red}\text{TODO}}$ to SOC classification codes.
+- SOC Lookup.  A utility that uses a well-known set of SOC mappings of job titles to SOC classification codes.
 - SOC Classification. A RAG approach to classification of SOC using input data, semantic search and LLM. ${\small\color{red}\text{TODO: confirm this is correct for SOC}}$.
 
 ## Prerequisites
@@ -82,8 +82,6 @@ make run-docs
 ```
 
 ### Testing
-
-${\small\color{red}\text{TODO: implement tests}}$
 
 Pytest is used for testing alongside pytest-cov for coverage testing.  [/tests/conftest.py](/tests/conftest.py) defines config used by the tests.
 
