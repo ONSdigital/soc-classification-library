@@ -233,9 +233,8 @@ class SOCRephraseLookup:
 
         return data
 
-    def lookup(self, soc_code: Union[str, int]) -> dict[str, Union[str, Any]]:
+    def lookup(self, soc_code: str) -> dict[str, Union[str, Any]]:
         """Retrieve reviewed description for the given SOC code."""
-        soc_code = str(soc_code)
 
         if soc_code in self.lookup_dict:
             return {
