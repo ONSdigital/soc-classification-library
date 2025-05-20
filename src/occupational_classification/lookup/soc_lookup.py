@@ -45,21 +45,19 @@ class SOCLookup:
         Args:
             data_path (str): The path to the CSV file containing SOC data.
         """
-        self.soc_df: pd.DataFrame = load_soc_index(data_path)
-        self.data = self.data_preparation()
+        self.data = self.data_preparation(data_path)
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
         self.meta: SocMeta = SocMeta()
 
-    def data_preparation(self):
+    def data_preparation(self, data_path):
         """Converts the data for useful format for lookup method.
 
         Returns:
             pd.DataFrame: A DataFrame containing data useful for lookups.
         """
-        soc_df = self.soc_df.copy()
-        data: pd.DataFrame = soc_df
+        data = load_soc_index(data_path)
         data["label"] = data["code"]
         data["description"] = data["title"].str.lower()
         data = data.drop(["title", "code"], axis=1)
@@ -235,7 +233,6 @@ class SOCRephraseLookup:
 
     def lookup(self, soc_code: str) -> dict[str, Union[str, Any]]:
         """Retrieve reviewed description for the given SOC code."""
-
         if soc_code in self.lookup_dict:
             return {
                 "soc_code": soc_code,
