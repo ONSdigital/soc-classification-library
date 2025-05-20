@@ -24,3 +24,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - occupational_classsification.hierarchy.soc_hierarchy and dependencies
 - tests/test_soc_data_structure.py
+
