@@ -33,9 +33,6 @@ print(result)
 
 print("\n")
 print("Example usage of SOCLookup with unique code major group")
-# soc_lookup = SOCLookup(
-#     data_path="src/occupational_classification/data/soc2020volume2thecodingindexexcel16042025.xlsx"
-# )
 result_list: list[dict[str, Any]] = soc_lookup.unique_code_major_group(
     [{"soc_code": "1111"}, {"soc_code": "2111"}, {"soc_code": "9265"}]
 )
