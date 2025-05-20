@@ -85,7 +85,7 @@ class SocMeta:
 
     def __init__(
         self,
-        data_path: str = "../src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
+        data_path: str = "src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
     ):
         self.df = load_soc_structure(data_path)
         self.soc_meta = SocDB(self.df).create_soc_dictionary()
