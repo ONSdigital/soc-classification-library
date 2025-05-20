@@ -103,12 +103,13 @@ class SocMeta:
             if element["code"] == code:
                 return {
                     "code": element.get("code", None),
-                    "group title": element.get("soc2020_group_title", None),
-                    "group description": element.get("group_description", None),
-                    "typical entry routes and associated qualifications": element.get(
-                        "tasks", []
+
+                    "group_title": element.get("soc2020_group_title", None),
+                    "group_description": element.get("group_description", None),
+                    "entry_routes_and_quals": element.get(
+                        "qualifications", []
                     ),
-                    "tasks": element.get("qualifications", []),
+                    "tasks": element.get("tasks", []),
                 }
 
         # No match found
