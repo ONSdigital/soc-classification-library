@@ -76,7 +76,7 @@ class SocDB:
 
 class SocMeta:
     """SOC Meta data model class for SOC codes and their desriptions.
-    Load and manage data related to SOC codes. 
+    Load and manage data related to SOC codes.
 
     Attributes:
         df (pd.DataFrame): DataFrame containing data for SOC structure.

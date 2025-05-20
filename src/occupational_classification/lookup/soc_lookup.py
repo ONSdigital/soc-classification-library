@@ -90,7 +90,6 @@ class SOCLookup:
             # Lookup the meta data for the code
             matching_code_meta = self.meta.get_meta_by_code(matching_code)
             major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
-            print(matching_code_meta)
 
         if not matching_code:
             matching_code = None
@@ -166,7 +165,7 @@ class SOCLookup:
         """Retrieve unique code divisions from SOC candidates.
 
         Returns:
-            list: Major group metadata.
+            list[dict[str, Union[str, dict[str, str]]]]: Major group metadata.
         """
         unique_major_group: dict[str, dict[str, Any]] = {}
 
@@ -266,9 +265,7 @@ class SOCRephraseLookup:
 
         # Update SOC candidates
         for candidate in input_json["soc_candidates"]:
-            print("Candidate: ", candidate)
             rephrased_descriptive = self.lookup(candidate["soc_code"])
-            print("Descr: ", rephrased_descriptive)
             if rephrased_descriptive:
                 candidate["soc_descriptive"] = rephrased_descriptive[
                     "input_description"
