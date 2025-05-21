@@ -13,6 +13,7 @@ from typing import Any, Optional, Union
 
 import pandas as pd
 
+from occupational_classification._config.mian import get_config
 from occupational_classification.data_access.soc_data_access import (
     load_soc_index,
     load_soc_structure,
@@ -38,7 +39,7 @@ class SOCLookup:
 
     def __init__(
         self,
-        data_path: str = "../src/occupational_classification/data/soc2020volume2thecodingindexexcel16042025.xlsx",
+        data_path: str = get_config()["data_source"]["soc_index"],
     ):
         """Initialises the SOCLookup class by loading SOC data from a CSV file.
 
@@ -201,8 +202,8 @@ class SOCRephraseLookup:
 
     def __init__(
         self,
-        data_path_structure: str = "../src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
-        data_path_index: str = "../src/occupational_classification/data/soc2020volume2thecodingindexexcel16042025.xlsx",
+        data_path_structure: str = get_config()["data_source"]["soc_structure"],
+        data_path_index: str = get_config()["data_source"]["soc_index"],
     ):
         self.data_path_structure = data_path_structure
         self.data_path_index = data_path_index

@@ -8,6 +8,7 @@ for given SOC codes.
 
 import pandas as pd
 
+from occupational_classification._config.mian import get_config
 from occupational_classification.data_access.soc_data_access import load_soc_structure
 from occupational_classification.meta.classification_meta import ClassificationMeta
 
@@ -85,7 +86,7 @@ class SocMeta:
 
     def __init__(
         self,
-        data_path: str = "src/occupational_classification/data/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx",
+        data_path: str = get_config()["data_source"]["soc_structure"],
     ):
         self.df = load_soc_structure(data_path)
         self.soc_meta = SocDB(self.df).create_soc_dictionary()
@@ -103,12 +104,9 @@ class SocMeta:
             if element["code"] == code:
                 return {
                     "code": element.get("code", None),
-
                     "group_title": element.get("soc2020_group_title", None),
                     "group_description": element.get("group_description", None),
-                    "entry_routes_and_quals": element.get(
-                        "qualifications", []
-                    ),
+                    "entry_routes_and_quals": element.get("qualifications", []),
                     "tasks": element.get("tasks", []),
                 }
 
