@@ -103,7 +103,6 @@ class SocMeta:
             if element["code"] == code:
                 return {
                     "code": element.get("code", None),
-
                     "group_title": element.get("soc2020_group_title", None),
                     "group_description": element.get("group_description", None),
                     "entry_routes_and_quals": element.get(
