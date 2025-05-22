@@ -48,8 +48,8 @@ def load_soc_index(filepath: str) -> pd.DataFrame:
     )
 
     soc_index_df = soc_index_df[soc_index_df["code"] != "}}}}"]
-    soc_index_df["title"] = soc_index_df.apply(combine_job_title, axis=1)
     soc_index_df = soc_index_df.dropna(subset=["code", "natural_word"])
+    soc_index_df["title"] = soc_index_df.apply(combine_job_title, axis=1)
     soc_index_df = soc_index_df[["code", "title"]]
     soc_index_df["title"] = soc_index_df["title"].str.capitalize()
 
