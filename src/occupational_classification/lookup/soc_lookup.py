@@ -11,15 +11,11 @@ Classes:
 
 from typing import Any, Optional, Union
 
-import pandas as pd
-
 from occupational_classification._config.mian import get_config
 from occupational_classification.data_access.soc_data_access import (
     load_soc_index,
-    load_soc_structure,
 )
-from occupational_classification.hierarchy.soc_hierarchy import load_hierarchy
-from occupational_classification.meta.soc_meta import SocDB, SocMeta
+from occupational_classification.meta.soc_meta import SocMeta
 
 UNIT_CODE_LEN = 4
 
@@ -200,37 +196,12 @@ class SOCRephraseLookup:
             Adds a new rephrase mapping to the lookup dictionary.
     """
 
-    def __init__(
-        self,
-        data_path_structure: str = get_config()["data_source"]["soc_structure"],
-        data_path_index: str = get_config()["data_source"]["soc_index"],
-    ):
-        self.data_path_structure = data_path_structure
-        self.data_path_index = data_path_index
-        self.data: pd.DataFrame = self.access_hierarchy()
+    def __init__(self):
+        self.meta: SocMeta = SocMeta()
 
-        # Create a lookup dictionary for quick access
-        self.lookup_dict: dict[str, str] = self.data.set_index("soc_code")[
-            "input_description"
-        ].to_dict()
-
-    def access_hierarchy(self):
-        """Converts the data for useful format for lookup method.
-
-        Returns:
-            pd.DataFrame: A DataFrame containing data useful
-            for rephrased lookups.
-        """
-        soc_structure = load_soc_structure(self.data_path_structure)
-        soc_df = SocDB.create_soc_dataframe(soc_structure)
-
-        soc_index = load_soc_index(self.data_path_index)
-
-        data = load_hierarchy(soc_df, soc_index).all_leaf_text()
-
-        data = data.rename(columns={"code": "soc_code", "text": "input_description"})
-
-        return data
+        self.lookup_dict: dict[str, str] = {
+            item["code"]: item["soc2020_group_title"] for item in self.meta.soc_meta
+        }
 
     def lookup(self, soc_code: str) -> dict[str, Union[str, Any]]:
         """Retrieve reviewed description for the given SOC code."""
