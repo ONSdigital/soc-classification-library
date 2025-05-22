@@ -45,21 +45,19 @@ class SOCLookup:
         Args:
             data_path (str): The path to the CSV file containing SOC data.
         """
-        self.soc_df: pd.DataFrame = load_soc_index(data_path)
-        self.data = self.data_preparation()
+        self.data = self.data_preparation(data_path)
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
         self.meta: SocMeta = SocMeta()
 
-    def data_preparation(self):
+    def data_preparation(self, data_path):
         """Converts the data for useful format for lookup method.
 
         Returns:
             pd.DataFrame: A DataFrame containing data useful for lookups.
         """
-        soc_df = self.soc_df.copy()
-        data: pd.DataFrame = soc_df
+        data = load_soc_index(data_path)
         data["label"] = data["code"]
         data["description"] = data["title"].str.lower()
         data = data.drop(["title", "code"], axis=1)
@@ -90,7 +88,6 @@ class SOCLookup:
             # Lookup the meta data for the code
             matching_code_meta = self.meta.get_meta_by_code(matching_code)
             major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
-            print(matching_code_meta)
 
         if not matching_code:
             matching_code = None
@@ -166,7 +163,7 @@ class SOCLookup:
         """Retrieve unique code divisions from SOC candidates.
 
         Returns:
-            list: Major group metadata.
+            list[dict[str, Union[str, dict[str, str]]]]: Major group metadata.
         """
         unique_major_group: dict[str, dict[str, Any]] = {}
 
@@ -234,10 +231,8 @@ class SOCRephraseLookup:
 
         return data
 
-    def lookup(self, soc_code: Union[str, int]) -> dict[str, Union[str, Any]]:
+    def lookup(self, soc_code: str) -> dict[str, Union[str, Any]]:
         """Retrieve reviewed description for the given SOC code."""
-        soc_code = str(soc_code)
-
         if soc_code in self.lookup_dict:
             return {
                 "soc_code": soc_code,
@@ -266,9 +261,7 @@ class SOCRephraseLookup:
 
         # Update SOC candidates
         for candidate in input_json["soc_candidates"]:
-            print("Candidate: ", candidate)
             rephrased_descriptive = self.lookup(candidate["soc_code"])
-            print("Descr: ", rephrased_descriptive)
             if rephrased_descriptive:
                 candidate["soc_descriptive"] = rephrased_descriptive[
                     "input_description"
