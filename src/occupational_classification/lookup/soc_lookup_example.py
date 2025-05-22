@@ -38,10 +38,8 @@ print(result_list)
 print("\n")
 print("Example usage of SOCRephraseLookup with lookup")
 # Example usage of SOCRephraseLookup
-soc_rephrase_lookup = SOCRephraseLookup(
-    data_path_structure=get_config()["data_source"]["soc_structure"],
-    data_path_index=get_config()["data_source"]["soc_index"],
-)
+soc_rephrase_lookup = SOCRephraseLookup()
+
 # Retrieve reviewed description for a specific SOC code
 rephrased_result = soc_rephrase_lookup.lookup("1111")
 print(rephrased_result)
