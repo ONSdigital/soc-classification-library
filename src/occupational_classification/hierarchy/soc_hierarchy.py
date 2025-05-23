@@ -275,13 +275,10 @@ def _populate_tasks_and_quals(nodes: list):
     for node in nodes:
         code = node.soc_code
         if SocCode(code).code_length() == _SOC_CODE_LENGTH:
-            qual = soc_meta.get_meta_by_code(code)[
-                "entry_routes_and_quals"
-            ]
+            qual = soc_meta.get_meta_by_code(code)["entry_routes_and_quals"]
             node.qualifications = qual
 
-            tasks = soc_meta.get_meta_by_code(code)["tasks"]
-            tasks_list = tasks.replace("\n", "").split("~")
+            tasks_list = soc_meta.get_meta_by_code(code)["tasks"]
             node.tasks = tasks_list[1:]
 
 
