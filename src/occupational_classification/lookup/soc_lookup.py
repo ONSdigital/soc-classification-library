@@ -3,10 +3,16 @@ the lookup of Standard Occupational Classification (SOC) codes based on descript
 rephrased descriptions. It also handles preprocessing of SOC data and provides metadata
 for the classifications.
 
+The data is provided form ONS, located in src/occupational_classification/data.
+To access data:
+    ```
+    from occupational_classification._config.mian import get_config
+    get_config().CONFIG_NAME
+    ```
+
 Classes:
     SOCLookup: A class for loading SOC data, performing lookups, and managing metadata.
     SOCRephraseLookup: A class for performing rephrased lookups of SOC codes.
-
 """
 
 from typing import Any, Optional, Union
