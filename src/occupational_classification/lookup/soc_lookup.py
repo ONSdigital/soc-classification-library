@@ -13,7 +13,7 @@ from typing import Any, Optional, Union
 
 import pandas as pd
 
-from occupational_classification._config.mian import get_config
+from occupational_classification._config.main import get_config
 from occupational_classification.data_access.soc_data_access import (
     load_soc_index,
     load_soc_structure,

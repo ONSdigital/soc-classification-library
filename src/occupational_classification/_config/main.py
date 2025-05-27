@@ -2,7 +2,7 @@
 
 Usage:
     ```
-    from occupational_classification._config.mian import get_config
+    from occupational_classification._config.main import get_config
     get_config().CONFIG_NAME
     ```
 """

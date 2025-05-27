@@ -13,7 +13,7 @@ Example Usage:
 
 from typing import Any
 
-from occupational_classification._config.mian import get_config
+from occupational_classification._config.main import get_config
 from occupational_classification.lookup.soc_lookup import SOCLookup, SOCRephraseLookup
 
 # Example usage of SOCLookup

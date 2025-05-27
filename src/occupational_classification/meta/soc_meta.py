@@ -8,7 +8,7 @@ for given SOC codes.
 
 import pandas as pd
 
-from occupational_classification._config.mian import get_config
+from occupational_classification._config.main import get_config
 from occupational_classification.data_access.soc_data_access import load_soc_structure
 from occupational_classification.meta.classification_meta import ClassificationMeta
 
