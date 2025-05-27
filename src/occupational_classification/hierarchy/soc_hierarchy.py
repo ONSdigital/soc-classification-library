@@ -6,6 +6,8 @@ Usage: provides information regarding the specified code.
 
 import pandas as pd
 
+from occupational_classification.meta.soc_meta import SocMeta
+
 _LEVEL_DICT = {1: "Major", 2: "Sub-Major", 3: "Minor", 4: "Unit"}
 _SOC_CODE_LENGTH = 4
 
@@ -239,16 +241,17 @@ def _define_codes_and_nodes(soc_df: pd.DataFrame):
     """Creates codes list, nodes list and code_node_dict dictionary,
     later used for SOC.
     """
+    soc_meta = SocMeta()
     codes = []
     nodes = []
 
     code_node_dict = {}
 
-    for code, group_title, group_description in soc_df[
-        ["code", "soc2020_group_title", "group_description"]
-    ].itertuples(index=False, name=None):
+    for code in soc_df["code"]:
+        group_description = soc_meta.get_meta_by_code(code)["group_description"]
+        group_title = soc_meta.get_meta_by_code(code)["group_title"]
         soc_node = SocNode(
-            code, group_description=group_description, group_title=group_title
+            code, group_title=group_title, group_description=group_description
         )
 
         codes.append(code)
@@ -266,16 +269,19 @@ def _populate_parent_child_relationships(nodes: list, code_node_dict: dict):
             code_node_dict[node.soc_code].parent = code_node_dict[parent_code]
 
 
-def _populate_tasks_and_quals(nodes: list, soc_df: pd.DataFrame):
+def _populate_tasks_and_quals(nodes: list):
     """Populate tasks and qualifications. Modifies nodes in places."""
+    soc_meta = SocMeta()
     for node in nodes:
-        if SocCode(node.soc_code).code_length() == _SOC_CODE_LENGTH:
-            qual = soc_df.loc[soc_df["code"] == node.soc_code, "qualifications"]
-            node.qualifications = qual.iloc[0]
+        code = node.soc_code
+        if SocCode(code).code_length() == _SOC_CODE_LENGTH:
+            qual = soc_meta.get_meta_by_code(code)[
+                "entry_routes_and_quals"
+            ]
+            node.qualifications = qual
 
-            tasks = soc_df.loc[soc_df["code"] == node.soc_code, "tasks"]
-            tasks_list = tasks.iloc[0].replace("\n", "").split("~")
-
+            tasks = soc_meta.get_meta_by_code(code)["tasks"]
+            tasks_list = tasks.replace("\n", "").split("~")
             node.tasks = tasks_list[1:]
 
 
@@ -283,21 +289,10 @@ def _populate_job_titles(nodes: list, soc_index: pd.DataFrame):
     """Populate job titles. Modifies nodes in places."""
     for node in nodes:
         if SocCode(node.soc_code).code_length() == _SOC_CODE_LENGTH:
-            filtered_index = soc_index[soc_index["soc_2020"] == str(node.soc_code)]
+            filtered_index = soc_index[soc_index["code"] == str(node.soc_code)]
 
             for _index, row in filtered_index.iterrows():
-
-                job_title = ""
-
-                if pd.notna(row["add"]):
-                    job_title += f"{row['add']} "
-
-                job_title += row["natural_word"]
-
-                if pd.notna(row["ind"]):
-                    job_title += f" ({row['ind']})"
-
-                node.job_titles.append(job_title)
+                node.job_titles.append(row["title"])
 
 
 def is_leaf_code(code) -> bool:
@@ -329,7 +324,7 @@ def load_hierarchy(soc_df, soc_index):
 
     _populate_parent_child_relationships(nodes, code_node_dict)
 
-    _populate_tasks_and_quals(nodes, soc_df)
+    _populate_tasks_and_quals(nodes)
 
     _populate_job_titles(nodes, soc_index)
 
