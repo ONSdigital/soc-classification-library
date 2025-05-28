@@ -9,7 +9,7 @@ SOC classification library, utilities used to classify occupation code based off
 ## Features
 
 - SOC Lookup.  A utility that uses a well-known set of SOC mappings of job titles to SOC classification codes.
-- SOC Classification. A RAG approach to classification of SOC using input data, semantic search and LLM. ${\small\color{red}\text{TODO: confirm this is correct for SOC}}$.
+- SOC Classification. A RAG approach to classification of SOC using input data, semantic search and LLM.
 
 ## Prerequisites
 
