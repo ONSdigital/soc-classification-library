@@ -48,7 +48,11 @@ pre-commit install
 
 ### Run Locally
 
-${\small\color{red}\text{TODO: implement local example script(s)}}$
+There is example source for using the SOC Lookup functionality in soc_lookup_example.py to run:
+
+```bash
+poetry run python src/occupational_classification/lookup/soc_lookup_example.py
+```
 
 
 ### GCP Setup
