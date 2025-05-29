@@ -66,7 +66,7 @@ class SocDB:
 
         for row in range(num_rows):
             soc_dict = self.code_selection(df.loc[row])
-            if "tasks" in soc_dict.keys():
+            if "tasks" in soc_dict:
                 soc_dict["tasks"] = soc_dict["tasks"].replace("\n", "").split("~")[1:]
             soc_validated = ClassificationMeta.model_validate(soc_dict)
             soc_list.append(soc_validated.dict())
