@@ -107,7 +107,7 @@ class SocMeta:
                     "group_title": element.get("soc2020_group_title", None),
                     "group_description": element.get("group_description", None),
                     "entry_routes_and_quals": element.get("qualifications", []),
-                    "tasks": element.get("tasks", []),
+                    "tasks": element.get("tasks", []).replace("\n", "").split("~")[1:],
                 }
 
         # No match found
