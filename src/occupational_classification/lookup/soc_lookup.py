@@ -3,7 +3,7 @@ the lookup of Standard Occupational Classification (SOC) codes based on descript
 rephrased descriptions. It also handles preprocessing of SOC data and provides metadata
 for the classifications.
 
-The data is provided form ONS, located in src/occupational_classification/data.
+The data is provided from ONS, as in docs/index.md.
 To access data:
     ```
     from occupational_classification._config.mian import get_config
