@@ -24,7 +24,7 @@ class ClassificationMeta(BaseModel):
             details than group_title.
         qualifications (str): Applies only for Unit Group. Provides string that
             represents typical entry routes and qualifications required.
-        tasks (str): Applies only for Unit Group. Provides a string that
+        tasks (list): Applies only for Unit Group. Provides a list that
             represents a list of typical tasks for given unit group.
     """
 
@@ -44,8 +44,8 @@ class ClassificationMeta(BaseModel):
         description="""Typical
         Entry Routes And Associated Qualifications for the unit group.""",
     )
-    tasks: Optional[str] = Field(
-        default="",
+    tasks: Optional[list[str]] = Field(
+        default=[],
         description="""An optional string with a list of tasks for the group.
         Applies only for Unit Group (4 digit code)""",
     )

@@ -17,11 +17,7 @@ Classes:
 
 from typing import Any, Optional, Union
 
-
-import pandas as pd
-
 from occupational_classification._config.main import get_config
-
 from occupational_classification.data_access.soc_data_access import (
     load_soc_index,
 )
@@ -205,7 +201,6 @@ class SOCRephraseLookup:
         add_rephrase_mapping(original: str, rephrased: str) -> None:
             Adds a new rephrase mapping to the lookup dictionary.
     """
-
 
     def __init__(self):
         self.meta: SocMeta = SocMeta()

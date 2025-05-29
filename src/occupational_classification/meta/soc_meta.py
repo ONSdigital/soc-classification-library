@@ -66,6 +66,8 @@ class SocDB:
 
         for row in range(num_rows):
             soc_dict = self.code_selection(df.loc[row])
+            if "tasks" in soc_dict.keys():
+                soc_dict["tasks"] = soc_dict["tasks"].replace("\n", "").split("~")[1:]
             soc_validated = ClassificationMeta.model_validate(soc_dict)
             soc_list.append(soc_validated.dict())
         return soc_list
@@ -107,7 +109,7 @@ class SocMeta:
                     "group_title": element.get("soc2020_group_title", None),
                     "group_description": element.get("group_description", None),
                     "entry_routes_and_quals": element.get("qualifications", []),
-                    "tasks": element.get("tasks", []).replace("\n", "").split("~")[1:],
+                    "tasks": element.get("tasks"),
                 }
 
         # No match found
