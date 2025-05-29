@@ -6,7 +6,7 @@ for the classifications.
 The data is provided from ONS, as in docs/index.md.
 To access data:
     ```
-    from occupational_classification._config.mian import get_config
+    from occupational_classification._config.main import get_config
     get_config().CONFIG_NAME
     ```
 
