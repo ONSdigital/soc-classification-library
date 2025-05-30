@@ -2,9 +2,8 @@
 
 Usage:
     ```
-    from sic_soc_llm import get_config
-    config = get_config()
-    config.CONFIG_NAME
+    from occupational_classification._config.main import get_config
+    get_config().CONFIG_NAME
     ```
 """
 
@@ -22,7 +21,7 @@ _config = None
 
 
 def check_file_exists(
-    file_name: Optional[Union[Path, str]] = "sic_soc_llm_config.toml",
+    file_name: Optional[Union[Path, str]] = "config.toml",
 ) -> Path:
     """Check if the file exists.
 
@@ -53,16 +52,12 @@ def check_file_exists(
     elif (Path.home() / file_path).exists():
         return Path.home() / file_path
     # check whether the file exists in the package resources
-    elif (
-        resources.files("occupational_classification._config") / file_path
-    ).exists():
+    elif (resources.files("occupational_classification._config") / file_path).exists():
         return resources.files("occupational_classification._config") / file_path
     elif (
         resources.files("occupational_classification.example_data") / file_path
     ).exists():
-        return (
-            resources.files("occupational_classification.example_data") / file_path
-        )
+        return resources.files("occupational_classification.example_data") / file_path
     else:
         return None
 

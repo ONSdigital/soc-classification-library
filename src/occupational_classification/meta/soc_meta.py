@@ -8,7 +8,7 @@ for given SOC codes.
 
 import pandas as pd
 
-from occupational_classification._config.mian import get_config
+from occupational_classification._config.main import get_config
 from occupational_classification.data_access.soc_data_access import load_soc_structure
 from occupational_classification.meta.classification_meta import ClassificationMeta
 
@@ -66,6 +66,8 @@ class SocDB:
 
         for row in range(num_rows):
             soc_dict = self.code_selection(df.loc[row])
+            if "tasks" in soc_dict:
+                soc_dict["tasks"] = soc_dict["tasks"].replace("\n", "").split("~")[1:]
             soc_validated = ClassificationMeta.model_validate(soc_dict)
             soc_list.append(soc_validated.dict())
         return soc_list
@@ -107,7 +109,7 @@ class SocMeta:
                     "group_title": element.get("soc2020_group_title", None),
                     "group_description": element.get("group_description", None),
                     "entry_routes_and_quals": element.get("qualifications", []),
-                    "tasks": element.get("tasks", []),
+                    "tasks": element.get("tasks"),
                 }
 
         # No match found
