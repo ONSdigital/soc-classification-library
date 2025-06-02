@@ -43,7 +43,7 @@ def test_soc_lookup_find_code_for_title(description, expected_label):
                 "code_major_group_meta": {
                     "code": "4",
                     "group_title": "Administrative and secretarial occupations",
-                    "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations.\nMost job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
+                    "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations. Most job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
                     "entry_routes_and_quals": "",
                     "tasks": [],
                 },
@@ -71,7 +71,7 @@ def test_soc_lookup_find_code_for_title(description, expected_label):
                 "code_major_group_meta": {
                     "code": "2",
                     "group_title": "Professional occupations",
-                    "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means.\nMost occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
+                    "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
                     "entry_routes_and_quals": "",
                     "tasks": [],
                 },
@@ -94,7 +94,7 @@ def test_lookup(description, expected_meta):
                 "code_major_group_meta": {
                     "code": "4",
                     "group_title": "Administrative and secretarial occupations",
-                    "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations.\nMost job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
+                    "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations. Most job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
                     "entry_routes_and_quals": "",
                     "tasks": [],
                 },
@@ -107,7 +107,7 @@ def test_lookup(description, expected_meta):
                 "code_major_group_meta": {
                     "code": "2",
                     "group_title": "Professional occupations",
-                    "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means.\nMost occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
+                    "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
                     "entry_routes_and_quals": "",
                     "tasks": [],
                 },
@@ -117,4 +117,34 @@ def test_lookup(description, expected_meta):
 )
 def test_lookup_code_major_group(code, expected_meta):
     lookup = soc_lookup.SOCLookup().lookup_code_major_group(code)
+    assert lookup == expected_meta
+
+@pytest.mark.parametrize(
+    "candidates, expected_meta",
+    [
+        ([{"soc_code": "2111"}, {"soc_code": "2431"}],
+        [{'code_major_group': '2',
+        'code_major_group_meta': {'code': '2',
+        'group_title': 'Professional occupations',
+        'group_description': 'This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.',
+        'entry_routes_and_quals': '',
+        'tasks': []}}]),
+        
+        ([{"soc_code": "2111"}, {"soc_code": "4111"}],
+        [{'code_major_group': '2',
+        'code_major_group_meta': {'code': '2',
+        'group_title': 'Professional occupations',
+        'group_description': 'This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.',
+        'entry_routes_and_quals': '',
+        'tasks': []}},
+        {'code_major_group': '4',
+        'code_major_group_meta': {'code': '4',
+        'group_title': 'Administrative and secretarial occupations',
+        'group_description': 'Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations. Most job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.',
+        'entry_routes_and_quals': '',
+        'tasks': []}}])
+    ]
+)
+def test_unique_code_major_group(candidates, expected_meta):
+    lookup = soc_lookup.SOCLookup().unique_code_major_group(candidates)
     assert lookup == expected_meta
