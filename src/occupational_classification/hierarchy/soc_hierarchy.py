@@ -162,7 +162,7 @@ class SOC:
     def all_group_descriptions(self):
         """All group descriptions. Only returns for leaf nodes."""
         return (
-            {"code": node.soc_code, "text": "Description: " + node.group_description}
+            {"code": node.soc_code, "text": node.group_description}
             for node in self.nodes
             if node.is_leaf()
         )
@@ -170,7 +170,7 @@ class SOC:
     def all_group_titles(self):
         """All group titles. Only returns for leaf nodes."""
         return (
-            {"code": node.soc_code, "text": "Title: " + node.group_title}
+            {"code": node.soc_code, "text": node.group_title}
             for node in self.nodes
             if node.is_leaf()
         )
@@ -182,8 +182,7 @@ class SOC:
         return (
             {
                 "code": node.soc_code,
-                "text": "Typical Entry Routes And Associated Qualifications: "
-                + node.qualifications,
+                "text": node.qualifications,
             }
             for node in self.nodes
             if node.is_leaf()
@@ -192,12 +191,10 @@ class SOC:
     def all_group_job_titles(self):
         """All group job titles. Only returns for leaf nodes."""
         return (
-            {
-                "code": node.soc_code,
-                "text": "Example Job Titles: " + ", ".join(node.job_titles),
-            }
+            {"code": node.soc_code, "text": title}
             for node in self.nodes
             if node.is_leaf()
+            for title in node.job_titles
         )
 
     def all_group_tasks(self):
@@ -212,28 +209,22 @@ class SOC:
         """Returns all short text descriptions of 4-digit level SOC.
 
         Includes:
-            - Group descriptions,
             - Group titles,
-            - Group typical entry routes and associated qualifications,
-            - Group job titles,
-            - Group tasks.
+            - Group job titles.
 
         Returns:
             pd.DataFrame
                 Two columns `code`, `text`
         """
-        gr_description = pd.DataFrame(self.all_group_descriptions())
         gr_title = pd.DataFrame(self.all_group_titles())
-        tasks = pd.DataFrame(self.all_group_tasks())
-        qualifications = pd.DataFrame(self.all_group_qualifications())
         job_titles = pd.DataFrame(self.all_group_job_titles())
 
-        df = pd.concat(
-            [gr_title, gr_description, tasks, qualifications, job_titles],
-            ignore_index=True,
-        )
+        df = pd.concat([gr_title, job_titles], ignore_index=True)
 
-        df = df.groupby("code")["text"].apply(lambda x: ", ".join(x)).reset_index()
+        df = df.drop_duplicates()
+        df = df.sort_values("code")
+        df = df.reset_index(drop=True).copy()
+
         return df
 
 
