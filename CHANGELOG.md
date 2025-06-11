@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Added
 - config for easier access to the data;
-- documentation - `README.md` containing overview, features, prerequisites, setup and testing instructions. Example usage is shown in `notebooks.soc_2025_05_01.py`;
+- documentation - `README.md` containing overview, features, prerequisites, setup and testing instructions. Example usage is shown in `notebooks/soc_2025_05_01.py`;
 - tests for `occupational_classification.data_access.soc_data_access` and `occupational_classification.lookup.soc_lookup`.
 
 ## Changed
