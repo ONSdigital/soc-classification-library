@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "soc-classification-library"
-version = "0.1.1"
+version = "0.1.2"
 description = "Standard Occupational Classification library"
 authors = ["Steve Gibbard <steve.gibbard@ons.gov.uk>"]
 license = "MIT"
