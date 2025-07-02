@@ -101,8 +101,8 @@ def test_leaf_assingment(children, expected_is_leaf):
                 soc_hierarchy.SocNode("2", "Title2", "Description2"),
             ],
             [
-                {"code": "1", "text": "Description: Description1"},
-                {"code": "2", "text": "Description: Description2"},
+                {"code": "1", "text": "Description1"},
+                {"code": "2", "text": "Description2"},
             ],
         ),
         ([], []),
@@ -124,8 +124,8 @@ def test_soc_all_descriptions(nodes, expected_descriptions):
                 soc_hierarchy.SocNode("2", "Title2", "Description2"),
             ],
             [
-                {"code": "1", "text": "Title: Title1"},
-                {"code": "2", "text": "Title: Title2"},
+                {"code": "1", "text": "Title1"},
+                {"code": "2", "text": "Title2"},
             ],
         ),
         ([], []),
@@ -164,7 +164,7 @@ def test_soc_all_tasks(nodes, initial_tasks, expected_group_tasks):
         (
             ("1", "Title1", "Description1"),
             ["Job1", "Job2"],
-            [{"code": "1", "text": "Example Job Titles: Job1, Job2"}],
+            [{"code": "1", "text": "Job1"}, {"code": "1", "text": "Job2"}],
         ),
     ],
 )
@@ -187,6 +187,6 @@ def test_soc_all_group_qualifications():
     assert result == [
         {
             "code": "1",
-            "text": "Typical Entry Routes And Associated Qualifications: Qualification1",
+            "text": "Qualification1",
         }
     ]
