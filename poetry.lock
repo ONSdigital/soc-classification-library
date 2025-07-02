@@ -1334,6 +1334,21 @@ pyyaml = "*"
 extra = ["pygments (>=2.19.1)"]
 
 [[package]]
+name = "pyprojroot"
+version = "0.3.0"
+description = "Project-oriented workflow in Python"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "pyprojroot-0.3.0-py3-none-any.whl", hash = "sha256:c426b51b17ab4f4d4f95b479cf5b6c22df59bb58fbd4f01b37a6977d29b99888"},
+    {file = "pyprojroot-0.3.0.tar.gz", hash = "sha256:109705bb790968704958efcfc5ccce85d8e3dafa054897cc81371fcbbf56cb10"},
+]
+
+[package.dependencies]
+typing-extensions = "*"
+
+[[package]]
 name = "pytest"
 version = "8.3.5"
 description = "pytest: simple powerful testing with Python"
@@ -1743,4 +1758,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "0ba3c203508ad1483e2f6b2b47a4f49bcc0365b99c80185494977159fde993d4"
+content-hash = "4d2271d3c5b7d4e1c06593e09e4faea635bf9429a61dbf6524fbae0edde16be0"
