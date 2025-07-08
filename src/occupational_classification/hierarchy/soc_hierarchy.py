@@ -4,8 +4,11 @@ Usage: provides information regarding the specified code.
     soc["1"].
 """
 
+from typing import Union
+
 import pandas as pd
 
+from occupational_classification._config.main import get_config
 from occupational_classification.meta.soc_meta import SocMeta
 
 _LEVEL_DICT = {1: "Major", 2: "Sub-Major", 3: "Minor", 4: "Unit"}
@@ -98,11 +101,11 @@ class SocNode:
         self.group_description = group_description
 
         self.group_level = SocCode(soc_code).group_classification()
-        self.tasks = []
+        self.tasks: list[str] = []
         self.parent = None
-        self.children = []
+        self.children: list[str] = []
         self.qualifications = None
-        self.job_titles = []
+        self.job_titles: list[str] = []
 
     def __repr__(self):
         return f'SocNode({self.soc_code!r}, "{self.group_title}", "{self.group_description}")'
@@ -228,11 +231,11 @@ class SOC:
         return df
 
 
-def _define_codes_and_nodes(soc_df: pd.DataFrame):
+def _define_codes_and_nodes(soc_df: pd.DataFrame, structure_data_path: str):
     """Creates codes list, nodes list and code_node_dict dictionary,
     later used for SOC.
     """
-    soc_meta = SocMeta()
+    soc_meta = SocMeta(structure_data_path=structure_data_path)
     codes = []
     nodes = []
 
@@ -260,9 +263,9 @@ def _populate_parent_child_relationships(nodes: list, code_node_dict: dict):
             code_node_dict[node.soc_code].parent = code_node_dict[parent_code]
 
 
-def _populate_tasks_and_quals(nodes: list):
+def _populate_tasks_and_quals(nodes: list, structure_data_path: str):
     """Populate tasks and qualifications. Modifies nodes in places."""
-    soc_meta = SocMeta()
+    soc_meta = SocMeta(structure_data_path=structure_data_path)
     for node in nodes:
         code = node.soc_code
         if SocCode(code).code_length() == _SOC_CODE_LENGTH:
@@ -288,7 +291,7 @@ def is_leaf_code(code) -> bool:
     return SocCode(code).code_length() > 1
 
 
-def find_parent(code) -> str:
+def find_parent(code) -> Union[str, None]:
     """Finds a code representing a parent, if the code is a leaf."""
     if is_leaf_code(code):
         n_digits = SocCode(code).code_length()
@@ -298,7 +301,11 @@ def find_parent(code) -> str:
         return None
 
 
-def load_hierarchy(soc_df, soc_index):
+def load_hierarchy(
+    soc_df,
+    soc_index,
+    structure_data_path: str = get_config()["data_source"]["soc_structure"],
+):
     """Create the SOC lookups from all supporting data.
 
     Uses:
@@ -308,11 +315,15 @@ def load_hierarchy(soc_df, soc_index):
     Once created this provides a single point of access for all
     data associated with a SOC definition.
     """
-    codes, nodes, code_node_dict = _define_codes_and_nodes(soc_df)
+    if structure_data_path == "":
+        structure_data_path = get_config()["data_source"]["soc_structure"]
+    codes, nodes, code_node_dict = _define_codes_and_nodes(
+        soc_df, structure_data_path=structure_data_path
+    )
 
     _populate_parent_child_relationships(nodes, code_node_dict)
 
-    _populate_tasks_and_quals(nodes)
+    _populate_tasks_and_quals(nodes, structure_data_path=structure_data_path)
 
     _populate_job_titles(nodes, soc_index)
 

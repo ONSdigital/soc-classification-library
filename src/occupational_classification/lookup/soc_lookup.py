@@ -52,7 +52,7 @@ class SOCLookup:
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
-        self.meta: SocMeta = SocMeta()
+        self.meta: SocMeta = SocMeta(get_config()["data_source"]["soc_structure"])
 
     def data_preparation(self, data_path):
         """Converts the data for useful format for lookup method.
