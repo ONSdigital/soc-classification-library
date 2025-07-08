@@ -4,7 +4,7 @@ Usage: provides information regarding the specified code.
     soc["1"].
 """
 
-from typing import Union
+from typing import Union, Optional
 
 import pandas as pd
 
@@ -304,7 +304,7 @@ def find_parent(code) -> Union[str, None]:
 def load_hierarchy(
     soc_df,
     soc_index,
-    structure_data_path: str = ""
+    structure_data_path: Optional[str] = None
 ):
     """Create the SOC lookups from all supporting data.
 
@@ -315,7 +315,7 @@ def load_hierarchy(
     Once created this provides a single point of access for all
     data associated with a SOC definition.
     """
-    if structure_data_path == "":
+    if structure_data_path is None:
         structure_data_path = get_config()["data_source"]["soc_structure"]
     codes, nodes, code_node_dict = _define_codes_and_nodes(
         soc_df, structure_data_path=structure_data_path
