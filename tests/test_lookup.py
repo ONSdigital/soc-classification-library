@@ -1,3 +1,4 @@
+# pylint: disable=C0301
 import pytest
 
 from src.occupational_classification.lookup import soc_lookup
