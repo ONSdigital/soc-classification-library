@@ -60,7 +60,7 @@ def check_file_exists(  # noqa: PLR0911
         if path.exists():
             return path
     with resources.as_file(
-        resources.files("occupational_classification.data").joinpath(str(file_path))
+        resources.files("occupational_classification._config").joinpath(str(file_path))
     ) as path:
         if path.exists():
             return path
