@@ -65,28 +65,29 @@ soc_lookup.data.sample(10)
 # Find the code for a specific job title
 
 # %%
-soc_lookup.lookup_dict["seed analyst"]
+# soc_lookup.lookup_dict["seed analyst"]
+soc_lookup.lookup_dict["vice president (banking)"]
 
 # %% [markdown]
 # Access information about the specific job title such as description, code, and meta.
 
 # %%
 # soc_lookup.lookup("Machine tester")
-soc_lookup.lookup("benefits fraud investigator (government)")
-# soc_lookup.lookup("Analyst")
+# soc_lookup.lookup("benefits fraud investigator (government)")
+soc_lookup.lookup("zoologist")
 
 # %% [markdown]
 # Find the major group for the specific code.
 
 # %%
-soc_lookup.lookup_code_major_group("1111")
+soc_lookup.lookup_code_major_group("2112")
 
 # %% [markdown]
 # Access meta for the major group of the specified code
 
 # %%
 soc_lookup.unique_code_major_group(
-    [{"soc_code": "1111"}, {"soc_code": "2111"}, {"soc_code": "9265"}]
+    [{"soc_code": "1111"}, {"soc_code": "2111"}, {"soc_code": "9265"}, {"soc_code": "41"}]
 )
 
 # %% [markdown]
@@ -111,7 +112,6 @@ input_json = {
 }
 processed_json = rephrased_soc.process_json(input_json)
 
-
 # %%
 processed_json
 
@@ -119,7 +119,7 @@ processed_json
 # ## Other methods to access meta
 
 # %%
-soc_meta = SocMeta()
+soc_meta = SocMeta(get_config()["data_source"]["soc_structure"])
 
 # %%
 soc_meta.soc_meta[3]
@@ -134,4 +134,9 @@ soc_meta.soc_meta[3].get("group_description")
 soc_lookup.meta.soc_meta[3]
 
 # %%
-soc_lookup.meta.get_meta_by_code("1111")
+soc_lookup.meta.get_meta_by_code("2431")
+
+# %% [markdown]
+# # Misc
+
+
