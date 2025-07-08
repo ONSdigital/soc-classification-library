@@ -20,9 +20,9 @@ logger = logging.getLogger(__name__)
 _config = None
 
 
-def check_file_exists(
+def check_file_exists(  # noqa: PLR0911
     file_name: Optional[Union[Path, str]] = "config.toml",
-) -> Path:
+) -> Optional[Path]:
     """Check if the file exists.
 
     If relative path provided it will look for the file in these locations:
@@ -38,7 +38,7 @@ def check_file_exists(
     Returns:
         Path: The absolute path to the file if it exists, None otherwise.
     """
-    file_path = Path(file_name)
+    file_path = Path(file_name)  # type: ignore
     # check whether the filepath is relative or absolute
     if file_path.is_absolute():
         return file_path if file_path.exists() else None
@@ -52,14 +52,20 @@ def check_file_exists(
     elif (Path.home() / file_path).exists():
         return Path.home() / file_path
     # check whether the file exists in the package resources
-    elif (resources.files("occupational_classification._config") / file_path).exists():
-        return resources.files("occupational_classification._config") / file_path
-    elif (
-        resources.files("occupational_classification.example_data") / file_path
-    ).exists():
-        return resources.files("occupational_classification.example_data") / file_path
-    else:
-        return None
+    with resources.as_file(
+        resources.files("occupational_classification.example_data").joinpath(
+            str(file_path)
+        )
+    ) as path:
+        if path.exists():
+            return path
+    with resources.as_file(
+        resources.files("occupational_classification._config").joinpath(str(file_path))
+    ) as path:
+        if path.exists():
+            return path
+    # else:
+    return None
 
 
 def get_config(config_name: Optional[Union[Path, str]] = "config.toml") -> dict:
@@ -79,7 +85,7 @@ def get_config(config_name: Optional[Union[Path, str]] = "config.toml") -> dict:
     Raises:
         FileNotFoundError: If the config file or required data not found.
     """
-    global _config
+    global _config  # noqa: PLW0603
 
     if _config is None:
         config_filepath = check_file_exists(config_name)
