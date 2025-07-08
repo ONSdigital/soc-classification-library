@@ -304,7 +304,7 @@ def find_parent(code) -> Union[str, None]:
 def load_hierarchy(
     soc_df,
     soc_index,
-    structure_data_path: str = get_config()["data_source"]["soc_structure"],
+    structure_data_path: str = ""
 ):
     """Create the SOC lookups from all supporting data.
 
