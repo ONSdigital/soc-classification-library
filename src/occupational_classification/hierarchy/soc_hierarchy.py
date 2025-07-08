@@ -302,8 +302,8 @@ def find_parent(code) -> Union[str, None]:
 
 
 def load_hierarchy(
-    soc_df,
-    soc_index,
+    soc_df: pd.DataFrame,
+    soc_index: pd.DataFrame,
     structure_data_path: Optional[str] = None
 ):
     """Create the SOC lookups from all supporting data.
