@@ -203,7 +203,7 @@ class SOCRephraseLookup:
     """
 
     def __init__(self):
-        self.meta: SocMeta = SocMeta()
+        self.meta: SocMeta = SocMeta(structure_data_path = get_config()["data_source"]["soc_structure"])
 
         self.lookup_dict: dict[str, str] = {
             item["code"]: item["soc2020_group_title"] for item in self.meta.soc_meta
