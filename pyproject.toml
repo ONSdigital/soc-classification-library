@@ -12,9 +12,9 @@ packages = [{ include = "occupational_classification", from = "src" }]
 python = "^3.12"
 pydantic = "^2.11.7"
 pandas = "^2.3.0"
+openpyxl = "^3.0.0"
 toml = "^0.10.2"
 pyprojroot = "^0.3.0"
-
 
 [tool.poetry.group.dev.dependencies]
 mkdocs-material = "^9.6.9"

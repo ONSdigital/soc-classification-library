@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
+## [0.1.3] - 2025-07-08
+
+## Added
+- type hints
+
+## Changed
+- `src.occupational_classification.meta.soc_meta` SocMeta instantiation method: now requires to specify a path to the file containing data for soc structure.
+- `src.occupational_classification.hierarchy.soc_hierarchy` load_hierarchy: takes additinoal argument _structure_data_path_ to allow specifying path to the file containing data for SOC structure.
+
+---
 ## [0.1.2] - 2025-06-10
 
 ## Added
