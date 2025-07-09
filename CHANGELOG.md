@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - type hints
 
 ## Changed
-- `src.occupational_classification.meta.soc_meta` SocMeta initialization method: now requires to specify a path to the file containing data for soc structure.
+- `src.occupational_classification.meta.soc_meta` SocMeta instantiation method: now requires to specify a path to the file containing data for soc structure.
 - `src.occupational_classification.hierarchy.soc_hierarchy` load_hierarchy: takes additinoal argument _structure_data_path_ to allow specifying path to the file containing data for SOC structure.
 
 ---
