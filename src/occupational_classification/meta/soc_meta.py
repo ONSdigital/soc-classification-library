@@ -86,6 +86,10 @@ class SocMeta:
     """SOC Meta data model class for SOC codes and their desriptions.
     Load and manage data related to SOC codes.
 
+    Args:
+        structure_data_path (str): a path to the file containing soc structure
+        data.
+
     Attributes:
         df (pd.DataFrame): DataFrame containing data for SOC structure.
         soc_meta (List[ClassificationMeta]): List of ClassificationMeta objects
