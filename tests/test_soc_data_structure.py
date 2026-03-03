@@ -1,3 +1,7 @@
+"""Tests for SOC code, node, and hierarchy behaviour."""
+
+# pylint: disable=line-too-long,missing-function-docstring
+
 import pytest
 
 from src.occupational_classification.hierarchy import soc_hierarchy
