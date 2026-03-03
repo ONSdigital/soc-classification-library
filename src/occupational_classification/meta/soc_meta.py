@@ -82,7 +82,7 @@ class SocDB:
         return pd.DataFrame(SocDB(self).create_soc_dictionary())
 
 
-class SocMeta:
+class SocMeta:  # pylint: disable=too-few-public-methods
     """SOC Meta data model class for SOC codes and their desriptions.
     Load and manage data related to SOC codes.
 
