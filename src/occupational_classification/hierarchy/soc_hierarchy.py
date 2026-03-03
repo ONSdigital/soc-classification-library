@@ -4,7 +4,7 @@ Usage: provides information regarding the specified code.
     soc["1"].
 """
 
-from typing import Union, Optional
+from typing import Optional, Union
 
 import pandas as pd
 
@@ -35,6 +35,7 @@ class SocCode:
         self.level_name = _LEVEL_DICT
 
     def code_length(self):
+        """Return the number of digits in the SOC code."""
         return len(self.code)
 
     @staticmethod
@@ -72,7 +73,7 @@ class SocCode:
         return group
 
 
-class SocNode:
+class SocNode:  # pylint: disable=too-many-instance-attributes
     """Creates a SOC object that is used for hierarchy operations."""
 
     def __init__(self, soc_code: str, group_title: str, group_description: str):
@@ -121,11 +122,11 @@ class SocNode:
     def print_all(self):
         """Prints all information about the SOC hierarchy.
         - code as "Code": A 1, 2, 3, or 4 digit code identifying group.
-        - soc2020_group_title as "Group Title": A short group title for the group code in SOC 2020.
-        - parent (if applicable) as Parent:  a code for parnt, followed with the group title.
-        - group_description as "Group Description": More in-depth description of the group.
-        - children (if applicable) as Children: a code for children, followed with the group title.
-        - tasks (if applicable) as Tasks: A list of tasks that are typically associated with the Unit group.
+        - soc2020_group_title as "Group Title": short SOC 2020 group title.
+        - parent (if applicable) as Parent: parent code and title.
+        - group_description as "Group Description": longer description text.
+        - children (if applicable) as Children: child codes and titles.
+        - tasks (if applicable) as Tasks: list of tasks for the Unit group.
         """
         print(f"SOC Code: {self.soc_code}")
         print(f"\nGroup Level: {self.group_level}")
@@ -232,8 +233,9 @@ class SOC:
 
 
 def _define_codes_and_nodes(soc_df: pd.DataFrame, structure_data_path: str):
-    """Creates codes list, nodes list and code_node_dict dictionary,
-    later used for SOC.
+    """Creates codes list, nodes list and code_node_dict dictionary.
+
+    Later used for SOC.
     """
     soc_meta = SocMeta(structure_data_path=structure_data_path)
     codes = []
@@ -297,14 +299,13 @@ def find_parent(code) -> Union[str, None]:
         n_digits = SocCode(code).code_length()
         code = str(code)
         return code[0 : n_digits - 1]
-    else:
-        return None
+    return None
 
 
 def load_hierarchy(
     soc_df: pd.DataFrame,
     soc_index: pd.DataFrame,
-    structure_data_path: Optional[str] = None
+    structure_data_path: Optional[str] = None,
 ):
     """Create the SOC lookups from all supporting data.
 
@@ -317,7 +318,7 @@ def load_hierarchy(
     """
     if structure_data_path is None:
         structure_data_path = get_config()["data_source"]["soc_structure"]
-    codes, nodes, code_node_dict = _define_codes_and_nodes(
+    _codes, nodes, code_node_dict = _define_codes_and_nodes(
         soc_df, structure_data_path=structure_data_path
     )
 
