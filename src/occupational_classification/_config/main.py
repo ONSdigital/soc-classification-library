@@ -17,10 +17,10 @@ from pyprojroot import here
 
 logger = logging.getLogger(__name__)
 
-_config = None
+_config = None  # pylint: disable=invalid-name
 
 
-def check_file_exists(  # noqa: PLR0911
+def check_file_exists(  # noqa: PLR0911  # pylint: disable=too-many-return-statements
     file_name: Optional[Union[Path, str]] = "config.toml",
 ) -> Optional[Path]:
     """Check if the file exists.
@@ -43,13 +43,13 @@ def check_file_exists(  # noqa: PLR0911
     if file_path.is_absolute():
         return file_path if file_path.exists() else None
     # check whether the file exists in the current directory
-    elif (Path.cwd() / file_path).exists():
+    if (Path.cwd() / file_path).exists():
         return Path.cwd() / file_path
     # check whether the file exists in the project root directory
-    elif (Path(here()) / file_path).exists():
+    if (Path(here()) / file_path).exists():
         return Path(here()) / file_path
     # check whether the file exists in the user's home directory
-    elif (Path.home() / file_path).exists():
+    if (Path.home() / file_path).exists():
         return Path.home() / file_path
     # check whether the file exists in the package resources
     with resources.as_file(
@@ -85,31 +85,28 @@ def get_config(config_name: Optional[Union[Path, str]] = "config.toml") -> dict:
     Raises:
         FileNotFoundError: If the config file or required data not found.
     """
-    global _config  # noqa: PLW0603
+    global _config  # noqa: PLW0603  # pylint: disable=global-statement
 
     if _config is None:
         config_filepath = check_file_exists(config_name)
 
         if config_filepath is None:
             raise FileNotFoundError("Config file not found.")
-        else:
-            with open(config_filepath) as f:
-                logger.info(f"Loading config from {config_filepath}")
-                in_config = toml.load(f)
-            for key, soc_data in in_config["data_source"].items():
-                soc_data_path = check_file_exists(soc_data)
-                if soc_data_path is None:
-                    if key in ["soc_index", "soc_structure"]:
-                        raise FileNotFoundError(
-                            f"Required soc_data file {key}: {soc_data} not found."
-                        )
-                    else:
-                        logger.warning(
-                            f"Optional lookup file {key}: {soc_data} not found."
-                        )
-                else:
-                    in_config["data_source"][key] = soc_data_path
-            _config = in_config
-            logger.debug(f"Config values: {_config}")
+
+        with open(config_filepath, encoding="utf-8") as f:
+            logger.info("Loading config from %s", config_filepath)
+            in_config = toml.load(f)
+        for key, soc_data in in_config["data_source"].items():
+            soc_data_path = check_file_exists(soc_data)
+            if soc_data_path is None:
+                if key in ["soc_index", "soc_structure"]:
+                    raise FileNotFoundError(
+                        f"Required soc_data file {key}: {soc_data} not found."
+                    )
+                logger.warning("Optional lookup file %s: %s not found.", key, soc_data)
+            else:
+                in_config["data_source"][key] = soc_data_path
+        _config = in_config
+        logger.debug("Config values: %s", _config)
 
     return _config
