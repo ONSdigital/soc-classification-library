@@ -1,3 +1,7 @@
+"""Tests for SOC data access utilities."""
+
+# pylint: disable=missing-function-docstring,redefined-outer-name,unused-argument
+
 from unittest.mock import patch
 
 import pandas as pd
