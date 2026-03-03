@@ -1,3 +1,7 @@
+"""Example usage of SOC hierarchy, lookup, and rephrase."""
+
+# pylint: disable=line-too-long,pointless-statement
+
 # %% [markdown]
 # # Provide a simple example on the usage of files.
 
@@ -50,7 +54,8 @@ hierarchy.all_leaf_text()
 # Access specific attributes of hierarchy (from soc_code, group_title, group_description, group_level, tasks, parent, children, qualifications, job_titles)
 
 # %%
-hierarchy["1111"].job_titles
+job_titles_1111 = hierarchy["1111"].job_titles
+print(job_titles_1111)
 
 # %% [markdown]
 # ## Create a lookup, for identical matches
@@ -87,7 +92,12 @@ soc_lookup.lookup_code_major_group("2112")
 
 # %%
 soc_lookup.unique_code_major_group(
-    [{"soc_code": "1111"}, {"soc_code": "2111"}, {"soc_code": "9265"}, {"soc_code": "41"}]
+    [
+        {"soc_code": "1111"},
+        {"soc_code": "2111"},
+        {"soc_code": "9265"},
+        {"soc_code": "41"},
+    ]
 )
 
 # %% [markdown]
@@ -113,7 +123,7 @@ input_json = {
 processed_json = rephrased_soc.process_json(input_json)
 
 # %%
-processed_json
+print(processed_json)
 
 # %% [markdown]
 # ## Other methods to access meta
@@ -138,5 +148,3 @@ soc_lookup.meta.get_meta_by_code("2431")
 
 # %% [markdown]
 # # Misc
-
-
