@@ -17,6 +17,8 @@ Classes:
 
 from typing import Any, Optional, Union
 
+import pandas as pd
+
 from occupational_classification._config.main import get_config
 from occupational_classification.data_access.soc_data_access import (
     load_soc_index,
@@ -191,30 +193,38 @@ class SOCRephraseLookup:
     rephrased or alternative descriptions to be matched to SOC codes.
 
     Attributes:
-        rephrase_dict (dict[str, str]): A dictionary mapping rephrased descriptions
-            to their corresponding SOC codes.
-        meta (SocMeta): Metadata for SOC classifications.
-
-    Methods:
-        rephrase_lookup(description: str) -> dict[str, Any]:
-            Looks up an SOC code based on a rephrased description.
-        add_rephrase_mapping(original: str, rephrased: str) -> None:
-            Adds a new rephrase mapping to the lookup dictionary.
+        data (pd.DataFrame): The SOC rephrase data loaded from a CSV file.
+        lookup_dict (dict[str, str]): A dictionary mapping SOC codes to rephrased descriptions.
     """
 
-    def __init__(self):
-        self.meta: SocMeta = SocMeta(structure_data_path = get_config()["data_source"]["soc_structure"])
+    def __init__(
+        self,
+        data_path: str = (
+            "src/occupational_classification/example_data/"
+            "example_rephrased_soc_data.csv"
+        ),
+    ):
+        """Initialise the SOCRephraseLookup with a rephrased SOC dataset.
 
-        self.lookup_dict: dict[str, str] = {
-            item["code"]: item["soc2020_group_title"] for item in self.meta.soc_meta
-        }
+        Args:
+            data_path: Path to the CSV file containing rephrased SOC descriptions.
+        """
+        # Load SOC rephrased descriptions and treat soc_code column as string
+        self.data: pd.DataFrame = pd.read_csv(data_path, dtype={"soc_code": str})
 
-    def lookup(self, soc_code: str) -> dict[str, Union[str, Any]]:
-        """Retrieve reviewed description for the given SOC code."""
+        # Create a lookup dictionary for quick access
+        self.lookup_dict: dict[str, str] = self.data.set_index("soc_code")[
+            "rephrased_description"
+        ].to_dict()
+
+    def lookup(self, soc_code: Union[str, int]) -> dict[str, Union[str, Any]]:
+        """Retrieve rephrased description for the given SOC code."""
+        soc_code = str(soc_code)
+
         if soc_code in self.lookup_dict:
             return {
                 "soc_code": soc_code,
-                "input_description": self.lookup_dict[soc_code],
+                "rephrased_description": self.lookup_dict[soc_code],
             }
 
         return {"soc_code": soc_code, "error": "SOC code not found"}
@@ -232,7 +242,7 @@ class SOCRephraseLookup:
 
         if rephrased_soc_description:
             input_json["soc_description"] = rephrased_soc_description[
-                "input_description"
+                "rephrased_description"
             ]
         else:
             input_json["soc_description"] = None
@@ -242,7 +252,7 @@ class SOCRephraseLookup:
             rephrased_descriptive = self.lookup(candidate["soc_code"])
             if rephrased_descriptive:
                 candidate["soc_descriptive"] = rephrased_descriptive[
-                    "input_description"
+                    "rephrased_description"
                 ]
 
         return input_json
