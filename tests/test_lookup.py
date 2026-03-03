@@ -1,4 +1,7 @@
-# pylint: disable=C0301
+"""Tests for SOCLookup and SOCRephraseLookup."""
+
+# pylint: disable=C0301,missing-function-docstring
+
 import pytest
 
 from src.occupational_classification.lookup import soc_lookup
