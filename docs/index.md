@@ -10,3 +10,4 @@ The SOC hierarchy object is built using two public data sources provided by ONS:
 ## Available Utilities
 
 - [SOC Lookup](guide.md): Lookup SOC from a well known list of occupations.
+- SOC rephrase support: packaged example data and `SOCRephraseLookup` for mapping `soc_code` values to respondent-friendly rephrased descriptions.
