@@ -27,5 +27,8 @@ poetry add git+https://github.com/ONSdigital/soc-classification-library.git@v.0.
 
 ### Usage
 
-Example code that uses the SOC Lookup and implicitly the SOC Meta code is available in soc_lookup_example.py ${\small\color{red}\text{(TODO)}}$
+Example code that uses the SOC lookup and SOC meta functionality is available in `src/occupational_classification/lookup/soc_lookup_example.py`. Run it with:
 
+```bash
+poetry run python src/occupational_classification/lookup/soc_lookup_example.py
+```
