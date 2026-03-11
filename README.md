@@ -4,12 +4,14 @@ Standard Occupational Classification (SOC) Library, initially developed for Surv
 
 ## Overview
 
-SOC classification library, utilities used to classify occupation code based off of ${\small\color{red}\text{TODO}}$.
+SOC classification library, utilities used to classify occupation code based off the
+official ONS SOC 2020 structure and coding index.
 
 ## Features
 
 - SOC Lookup.  A utility that uses a well-known set of SOC mappings of job titles to SOC classification codes.
 - SOC Classification. A RAG approach to classification of SOC using input data, semantic search and LLM.
+ - SOC Rephrase. Packaged example data and `SOCRephraseLookup` for mapping `soc_code` values to respondent-friendly rephrased descriptions.
 
 ## Prerequisites
 
@@ -77,9 +79,7 @@ make check-python
 
 ### Documentation
 
-Documentation is available in the docs folder and can be viewed using mkdocs
-
-${\small\color{red}\text{TODO: write documentation}}$
+Documentation is available in the `docs/` folder and can be viewed using mkdocs:
 
 ```bash
 make run-docs
@@ -103,4 +103,6 @@ make all-tests
 
 ### Environment Variables
 
-${\small\color{red}\text{TODO}}$
+This library is designed to be consumed as a Python package and does not require
+any environment variables on its own. Downstream services (such as `survey-assist-api`)
+may define their own configuration around it.
