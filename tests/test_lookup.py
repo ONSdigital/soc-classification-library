@@ -1,10 +1,54 @@
-"""Tests for SOCLookup and SOCRephraseLookup."""
+"""Tests for SOCLookup and SOCRephraseLookup.
 
-# pylint: disable=C0301,missing-function-docstring
+Mirrors sic-classification-library/tests/test_sic_lookup.py: uses fixture-based
+mock CSV data so tests do not require external Excel or config.
+"""
 
+# pylint: disable=C0301,missing-function-docstring,redefined-outer-name
+
+import pandas as pd
 import pytest
 
-from src.occupational_classification.lookup import soc_lookup
+from occupational_classification.lookup.soc_lookup import SOCLookup, SOCRephraseLookup
+
+
+@pytest.fixture
+def mock_data(tmp_path):
+    """Creates a temporary CSV file with mock SOC data.
+
+    Args:
+        tmp_path (Path): Temporary directory provided by pytest.
+
+    Returns:
+        Path: Path to the temporary CSV file.
+    """
+    data = pd.DataFrame(
+        {
+            "label": ["4111", "8139", "1131", "2112"],
+            "description": [
+                "benefits fraud investigator (government)",
+                "saw doctor",
+                "vice president (banking)",
+                "zoologist",
+            ],
+        }
+    )
+    file_path = tmp_path / "mock_soc_data.csv"
+    data.to_csv(file_path, index=False)
+    return file_path
+
+
+@pytest.fixture
+def soc_lookup_fixture(mock_data):
+    """Creates an instance of SOCLookup using the mock data.
+
+    Args:
+        mock_data (Path): Path to the mock SOC data CSV file.
+
+    Returns:
+        SOCLookup: Instance of the SOCLookup class.
+    """
+    return SOCLookup(data_path=str(mock_data))
 
 
 @pytest.mark.parametrize(
@@ -16,159 +60,165 @@ from src.occupational_classification.lookup import soc_lookup
         ("zoologist", "2112"),
     ],
 )
-def test_soc_lookup_find_code_for_title(description, expected_label):
-    lookup = soc_lookup.SOCLookup().lookup_dict[description]
+def test_soc_lookup_find_code_for_title(
+    soc_lookup_fixture, description, expected_label
+):
+    """Tests lookup_dict returns expected label for description (mirrors SIC exact match)."""
+    lookup = soc_lookup_fixture.lookup_dict[description]
     assert lookup == expected_label
 
 
 @pytest.mark.parametrize(
-    "description, expected_meta",
+    "description, expected_code, expected_major_group",
     [
-        (
-            "benefits fraud investigator (government)",
-            {
-                "description": "benefits fraud investigator (government)",
-                "code": "4111",
-                "code_meta": {
-                    "code": "4111",
-                    "group_title": "National government administrative occupations",
-                    "group_description": "National government administrative occupations undertake a variety of administrative and clerical duties in national government departments, and in local offices of national government departments.",
-                    "entry_routes_and_quals": "Entry is possible to junior grades within this group with GCSEs/S grades, and/or relevant practical experience higher grades require A levels/H grades or equivalent, although many entrants are graduates. NVQs/SVQs, apprenticeships and professional qualifications are available for certain areas of work.",
-                    "tasks": [
-                        "assists senior government officers with policy work, external liaison or general administrative work",
-                        "undertakes administrative duties specific to the operation of HM Revenue and Customs offices, Job Centres, Benefits Agency offices and other local offices of national government",
-                        "maintains and updates correspondence, documents, data and other records for storage in files or on computer",
-                        "classifies, sorts and files publications, correspondence etc. in offices and libraries",
-                        "responds to telephone enquiries and other forms of correspondence",
-                        "performs miscellaneous clerical tasks such as proof reading printed material, drafting letters, taking minutes etc",
-                    ],
-                },
-                "code_major_group": "4",
-                "code_major_group_meta": {
-                    "code": "4",
-                    "group_title": "Administrative and secretarial occupations",
-                    "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations. Most job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
-                    "entry_routes_and_quals": "",
-                    "tasks": [],
-                },
-            },
-        ),
-        (
-            "zoologist",
-            {
-                "description": "zoologist",
-                "code": "2112",
-                "code_meta": {
-                    "code": "2112",
-                    "group_title": "Biological scientists",
-                    "group_description": "Biological scientists examine and investigate the morphology, structure, and physical characteristics of living organisms, including their inter-relationships, environments and diseases.",
-                    "entry_routes_and_quals": "Entrants usually possess a degree and some roles may require a postgraduate qualification. Entry may also be possible with an appropriate BTEC/SQA award, an HNC/NHD, or other academic qualifications. Further specialist training is provided on the job. Some employers may expect entrants to gain professional qualifications.",
-                    "tasks": [
-                        "studies the physical form, structure, composition and function of living organisms",
-                        "researches the effects of internal and external environmental factors on the life processes and other functions of living organisms",
-                        "observes the structure of communities of organisms in the laboratory and in their natural environment",
-                        "advises farmers, medical staff and others, on the nature of field crops, livestock and produce and on the treatment and prevention of disease",
-                        "monitors the distribution, presence and behaviour of plants, animals and aquatic life, and performs other scientific tasks related to conservation not performed by Job holders in MINOR GROUP 215: Conservation and Environment Professionals",
-                    ],
-                },
-                "code_major_group": "2",
-                "code_major_group_meta": {
-                    "code": "2",
-                    "group_title": "Professional occupations",
-                    "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
-                    "entry_routes_and_quals": "",
-                    "tasks": [],
-                },
-            },
-        ),
+        ("benefits fraud investigator (government)", "4111", "4"),
+        ("zoologist", "2112", "2"),
     ],
 )
-def test_lookup(description, expected_meta):
-    lookup = soc_lookup.SOCLookup().lookup(description)
-    assert lookup == expected_meta
+def test_lookup(soc_lookup_fixture, description, expected_code, expected_major_group):
+    """Tests lookup() returns code and major group; meta is None when using CSV (mirrors SIC)."""
+    result = soc_lookup_fixture.lookup(description)
+    assert result["description"] == description
+    assert result["code"] == expected_code
+    assert result["code_major_group"] == expected_major_group
+    assert result["code_meta"] is None
+    assert result["code_major_group_meta"] is None
 
 
 @pytest.mark.parametrize(
-    "code, expected_meta",
+    "code, expected_major_group",
     [
-        (
-            "4111",
-            {
-                "code_major_group": "4",
-                "code_major_group_meta": {
-                    "code": "4",
-                    "group_title": "Administrative and secretarial occupations",
-                    "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations. Most job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
-                    "entry_routes_and_quals": "",
-                    "tasks": [],
-                },
-            },
-        ),
-        (
-            "2112",
-            {
-                "code_major_group": "2",
-                "code_major_group_meta": {
-                    "code": "2",
-                    "group_title": "Professional occupations",
-                    "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
-                    "entry_routes_and_quals": "",
-                    "tasks": [],
-                },
-            },
-        ),
+        ("4111", "4"),
+        ("2112", "2"),
     ],
 )
-def test_lookup_code_major_group(code, expected_meta):
-    lookup = soc_lookup.SOCLookup().lookup_code_major_group(code)
-    assert lookup == expected_meta
+def test_lookup_code_major_group(soc_lookup_fixture, code, expected_major_group):
+    """Tests lookup_code_major_group returns major group from code; meta None with CSV (mirrors SIC)."""
+    result = soc_lookup_fixture.lookup_code_major_group(code)
+    assert result["code_major_group"] == expected_major_group
+    assert result["code_major_group_meta"] is None
 
 
 @pytest.mark.parametrize(
-    "candidates, expected_meta",
+    "candidates, expected_major_groups",
     [
-        (
-            [{"soc_code": "2111"}, {"soc_code": "2431"}],
-            [
-                {
-                    "code_major_group": "2",
-                    "code_major_group_meta": {
-                        "code": "2",
-                        "group_title": "Professional occupations",
-                        "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
-                        "entry_routes_and_quals": "",
-                        "tasks": [],
-                    },
-                }
-            ],
-        ),
-        (
-            [{"soc_code": "2111"}, {"soc_code": "4111"}],
-            [
-                {
-                    "code_major_group": "2",
-                    "code_major_group_meta": {
-                        "code": "2",
-                        "group_title": "Professional occupations",
-                        "group_description": "This major group covers occupations whose main tasks require a high level of knowledge and experience in the natural sciences, engineering, life sciences, social sciences, humanities and related fields. The main tasks consist of the practical application of an extensive body of theoretical knowledge, increasing the stock of knowledge by means of research and communicating such knowledge by teaching methods and other means. Most occupations in this major group will require a degree or equivalent qualification, with some occupations requiring postgraduate qualifications and/or a formal period of experience-related training.",
-                        "entry_routes_and_quals": "",
-                        "tasks": [],
-                    },
-                },
-                {
-                    "code_major_group": "4",
-                    "code_major_group_meta": {
-                        "code": "4",
-                        "group_title": "Administrative and secretarial occupations",
-                        "group_description": "Occupations within this major group undertake general administrative, clerical and secretarial work, and perform a variety of specialist client-orientated administrative duties. The main tasks involve retrieving, updating, classifying and distributing documents, correspondence and other records held electronically and in storage files; typing, word-processing and otherwise preparing documents; operating other office and business machinery; receiving and directing telephone calls to an organisation; and routing information through organisations. Most job holders in this major group will require a good standard of general education. Certain occupations will require further additional vocational training or professional occupations to a well-defined standard.",
-                        "entry_routes_and_quals": "",
-                        "tasks": [],
-                    },
-                },
-            ],
-        ),
+        ([{"soc_code": "2111"}, {"soc_code": "2431"}], ["2"]),
+        ([{"soc_code": "2111"}, {"soc_code": "4111"}], ["2", "4"]),
     ],
 )
-def test_unique_code_major_group(candidates, expected_meta):
-    lookup = soc_lookup.SOCLookup().unique_code_major_group(candidates)
-    assert lookup == expected_meta
+def test_unique_code_major_group(soc_lookup_fixture, candidates, expected_major_groups):
+    """Tests unique_code_major_group returns unique major groups; meta None with CSV (mirrors SIC)."""
+    result = soc_lookup_fixture.unique_code_major_group(candidates)
+    assert len(result) == len(expected_major_groups)
+    got = sorted(r["code_major_group"] for r in result)
+    assert got == sorted(expected_major_groups)
+    for item in result:
+        assert item["code_major_group_meta"] is None
+
+
+def test_lookup_no_match(soc_lookup_fixture):
+    """Tests lookup when no match is found (mirrors SIC test_lookup_no_match)."""
+    result = soc_lookup_fixture.lookup("nonexistent description")
+    assert result["code"] is None
+    assert result["code_meta"] is None
+    assert result["code_major_group_meta"] is None
+
+
+def test_lookup_similarity(soc_lookup_fixture):
+    """Tests lookup with similarity enabled (mirrors SIC test_lookup_similarity)."""
+    result = soc_lookup_fixture.lookup("fraud", similarity=True)
+    assert "potential_matches" in result
+    assert result["potential_matches"]["descriptions_count"] > 0
+
+
+def test_unique_code_major_group_empty_list(soc_lookup_fixture):
+    """Tests unique_code_major_group with empty list (mirrors SIC test_unique_code_divisions_empty_list)."""
+    result = soc_lookup_fixture.unique_code_major_group([])
+    assert result == []
+
+
+def test_soc_lookup_default_path_uses_example_csv():
+    """Tests SOCLookup() with no args uses default example CSV (covers default-path branch for coverage)."""
+    # Default path is relative; run from repo root so src/.../example_soc_lookup_data.csv exists
+    lookup = SOCLookup()
+    result = lookup.lookup("senior officials and managers")
+    assert result["code"] == "1111"
+    assert result["code_major_group"] == "1"
+
+
+# --- SOCRephraseLookup tests (mirrors SIC rephrase coverage) ---
+
+
+@pytest.fixture
+def mock_rephrase_data(tmp_path):
+    """Creates a temporary CSV file with mock SOC rephrase data."""
+    data = pd.DataFrame(
+        {
+            "soc_code": ["1111", "2112", "4111"],
+            "rephrased_description": [
+                "Senior officials and managers",
+                "Biological scientists",
+                "National government administrative occupations",
+            ],
+        }
+    )
+    file_path = tmp_path / "mock_rephrase_soc_data.csv"
+    data.to_csv(file_path, index=False)
+    return file_path
+
+
+@pytest.fixture
+def soc_rephrase_lookup_fixture(mock_rephrase_data):
+    """Creates an instance of SOCRephraseLookup using the mock rephrase data."""
+    return SOCRephraseLookup(data_path=str(mock_rephrase_data))
+
+
+def test_soc_rephrase_lookup_found(soc_rephrase_lookup_fixture):
+    """Tests SOCRephraseLookup.lookup when soc_code is found."""
+    result = soc_rephrase_lookup_fixture.lookup("1111")
+    assert result["soc_code"] == "1111"
+    assert result["rephrased_description"] == "Senior officials and managers"
+
+
+def test_soc_rephrase_lookup_not_found(soc_rephrase_lookup_fixture):
+    """Tests SOCRephraseLookup.lookup when soc_code is not found."""
+    result = soc_rephrase_lookup_fixture.lookup("9999")
+    assert result["soc_code"] == "9999"
+    assert "error" in result
+
+
+def test_soc_rephrase_lookup_int_code(soc_rephrase_lookup_fixture):
+    """Tests SOCRephraseLookup.lookup accepts int soc_code (converted to str)."""
+    result = soc_rephrase_lookup_fixture.lookup(2112)
+    assert result["soc_code"] == "2112"
+    assert result["rephrased_description"] == "Biological scientists"
+
+
+def test_soc_rephrase_process_json(soc_rephrase_lookup_fixture):
+    """Tests SOCRephraseLookup.process_json updates main and candidate descriptions."""
+    input_json = {
+        "soc_code": "1111",
+        "soc_description": None,
+        "soc_candidates": [
+            {"soc_code": "2112"},
+            {"soc_code": "4111"},
+        ],
+    }
+    result = soc_rephrase_lookup_fixture.process_json(input_json)
+    assert result["soc_description"] == "Senior officials and managers"
+    assert result["soc_candidates"][0]["soc_descriptive"] == "Biological scientists"
+    assert (
+        result["soc_candidates"][1]["soc_descriptive"]
+        == "National government administrative occupations"
+    )
+
+
+def test_soc_rephrase_process_json_null_soc_code(soc_rephrase_lookup_fixture):
+    """Tests SOCRephraseLookup.process_json when soc_code is None."""
+    input_json = {
+        "soc_code": None,
+        "soc_description": None,
+        "soc_candidates": [],
+    }
+    result = soc_rephrase_lookup_fixture.process_json(input_json)
+    assert result["soc_description"] is None
