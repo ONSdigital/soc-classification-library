@@ -9,9 +9,8 @@ from occupational_classification.lookup.soc_lookup import SOCLookup
 
 def _get_example_csv_path() -> str:
     # Mirror the survey-assist-api SOCLookupClient default, which resolves the
-    # example lookup CSV from the "example_data" package data directory,
-    # analogous to how SIC uses its packaged example CSV.
-    data_dir = resources.files("occupational_classification.example_data")
+    # lookup CSV from the "data" package directory, aligned with SIC.
+    data_dir = resources.files("occupational_classification.data")
     return str(data_dir / "example_soc_lookup_data.csv")
 
 
@@ -24,10 +23,10 @@ def test_soc_lookup_example_exact_match():
     assert "label" in df.columns
 
     lookup = SOCLookup(data_path=csv_path)
-    result = lookup.lookup("senior officials and managers")
+    result = lookup.lookup("chief executives and senior officials")
 
     assert result["code"] == "1111"
-    assert result["description"] == "senior officials and managers"
+    assert result["description"] == "chief executives and senior officials"
 
 
 def test_soc_lookup_example_similarity():
