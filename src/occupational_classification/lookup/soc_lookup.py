@@ -43,21 +43,42 @@ class SOCLookup:
 
     def __init__(
         self,
-        data_path: str = get_config()["data_source"]["soc_index"],
+        data_path: str | None = None,
     ):
         """Initialises the SOCLookup class by loading SOC data from a CSV file.
 
         Args:
-            data_path (str): The path to the CSV file containing SOC data.
+            data_path (str | None): The path to the SOC lookup data.
+                When None, uses the example CSV dataset by default (CSV-first,
+                mirroring SICLookup behaviour).
         """
-        self.data = self.data_preparation(data_path)
+        # CSV-first default, analogous to SICLookup.
+        if data_path is None:
+            data_path = (
+                "src/occupational_classification/example_data/"
+                "example_soc_lookup_data.csv"
+            )
+
+        if data_path.lower().endswith(".csv"):
+            # Example CSV path: behave like SICLookup (CSV + lower-cased descriptions),
+            # and do not require any external SOC Excel data or config.
+            self.data = pd.read_csv(data_path, dtype=str)
+            self.data["description"] = self.data["description"].str.lower()
+            self.meta: SocMeta | None = None
+        else:
+            # Explicit, opt-in Excel/index path driven by config.
+            self.data = self.data_preparation(data_path)
+            self.meta = SocMeta(get_config()["data_source"]["soc_structure"])
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
-        self.meta: SocMeta = SocMeta(get_config()["data_source"]["soc_structure"])
 
     def data_preparation(self, data_path):
-        """Converts the data for useful format for lookup method.
+        """Converts the Excel index data into a useful format for lookup.
+
+        This is an explicit, opt-in path for callers that want to use
+        the full SOC index from the ONS Excel source instead of the
+        lightweight CSV example dataset.
 
         Returns:
             pd.DataFrame: A DataFrame containing data useful for lookups.
@@ -88,11 +109,10 @@ class SOCLookup:
         # Extract the first digit of the code as code_major_group
         matching_code_major_group: Optional[str] = None
         if matching_code:
-            # Lookup the most aggregated (Major) group
             matching_code_major_group = matching_code[:1]
-            # Lookup the meta data for the code
-            matching_code_meta = self.meta.get_meta_by_code(matching_code)
-            major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
+            if self.meta is not None:
+                matching_code_meta = self.meta.get_meta_by_code(matching_code)
+                major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
 
         if not matching_code:
             matching_code = None
@@ -104,21 +124,22 @@ class SOCLookup:
             matches = self.data[
                 self.data["description"].str.contains(description, na=False)
             ]
-            potential_codes = matches["label"].unique()
-
-            potential_codes = potential_codes.tolist()
+            potential_codes = matches["label"].unique().tolist()
             potential_descriptions = matches["description"].unique().tolist()
 
             major_group_codes = list({str(code)[:1] for code in potential_codes})
 
-            # Get meta data associated with each major group code
-            major_groups = [
-                {
-                    "code": major_group_code,
-                    "meta": self.meta.get_meta_by_code(major_group_code),
-                }
-                for major_group_code in major_group_codes
-            ]
+            major_groups: list[dict[str, Any]] = []
+            if self.meta is not None:
+                # Get meta data associated with each major group code when metadata
+                # is available (Excel/index-backed lookups).
+                major_groups = [
+                    {
+                        "code": major_group_code,
+                        "meta": self.meta.get_meta_by_code(major_group_code),
+                    }
+                    for major_group_code in major_group_codes
+                ]
 
             # Return the potential labels
             potential_matches = {
@@ -151,11 +172,9 @@ class SOCLookup:
             dict[str, dict[str, Any]]: A dictionary containing
             the matching Major Group SOC code and Major Group metadata.
         """
-        matching_code_meta: Optional[dict[str, Any]] = self.meta.get_meta_by_code(code)
+        matching_code_major_group: Optional[str] = code[:1] if code else None
         major_group_meta: Optional[dict[str, Any]] = None
-        matching_code_major_group: Optional[str] = None
-        if matching_code_meta:
-            matching_code_major_group = code[:1]
+        if self.meta is not None and matching_code_major_group is not None:
             major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
         return {
             "code_major_group": matching_code_major_group,
