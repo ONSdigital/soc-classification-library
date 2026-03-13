@@ -22,7 +22,7 @@ exact-match dictionary from lowercased job titles to SOC codes.
 
 The library also includes an example SOC rephrase dataset in:
 
-- `src/occupational_classification/example_data/example_rephrased_soc_data.csv`
+- `src/occupational_classification/data/example_rephrased_soc_data.csv`
 
 This CSV is intentionally small and is designed for testing and demonstrations rather
 than full SOC 2020 coverage.
