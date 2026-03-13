@@ -139,9 +139,9 @@ def test_unique_code_major_group_empty_list(soc_lookup_fixture):
 
 def test_soc_lookup_default_path_uses_example_csv():
     """Tests SOCLookup() with no args uses default example CSV (covers default-path branch for coverage)."""
-    # Default path is relative; run from repo root so src/.../example_soc_lookup_data.csv exists
+    # Default path is relative; run from repo root so src/.../data/example_soc_lookup_data.csv exists
     lookup = SOCLookup()
-    result = lookup.lookup("senior officials and managers")
+    result = lookup.lookup("chief executives and senior officials")
     assert result["code"] == "1111"
     assert result["code_major_group"] == "1"
 
