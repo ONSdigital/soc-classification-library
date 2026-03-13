@@ -1,0 +1,6 @@
+[run]
+omit =
+    tests/conftest.py
+    src/occupational_classification/lookup/soc_lookup_example.py
+    src/occupational_classification/_config/main.py
+    src/occupational_classification/meta/soc_meta.py
