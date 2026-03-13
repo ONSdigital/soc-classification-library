@@ -55,7 +55,7 @@ class SOCLookup:
         # CSV-first default, analogous to SICLookup.
         if data_path is None:
             data_path = (
-                "src/occupational_classification/example_data/"
+                "src/occupational_classification/data/"
                 "example_soc_lookup_data.csv"
             )
 
@@ -219,7 +219,7 @@ class SOCRephraseLookup:
     def __init__(
         self,
         data_path: str = (
-            "src/occupational_classification/example_data/"
+            "src/occupational_classification/data/"
             "example_rephrased_soc_data.csv"
         ),
     ):
