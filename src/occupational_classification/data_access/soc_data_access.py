@@ -34,9 +34,20 @@ def load_soc_index(filepath: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: A DataFrame with transformed job titles.
     """
-    soc_index_df = pd.read_excel(
+    # CSV export of the SOC2020 coding index workbook. The file may contain
+    # informational rows before the actual header, so we scan for the
+    # header line that contains the expected column names and let pandas
+    # use the following line as the header row.
+    header_row_index = 0
+    with open(filepath, encoding="utf-8") as csv_file:
+        for i, line in enumerate(csv_file):
+            if "SOC_2020" in line and "INDEXOCC_-_natural_word_order" in line:
+                header_row_index = i
+                break
+
+    soc_index_df = pd.read_csv(
         filepath,
-        sheet_name="SOC2020 coding index",
+        skiprows=header_row_index,
         usecols=["SOC_2020", "INDEXOCC_-_natural_word_order", "ADD", "IND"],
         dtype=str,
     )
@@ -69,9 +80,19 @@ def load_soc_structure(filepath: str) -> pd.DataFrame:
         group description, typical entry routes and associated qualifications,
         and list of tasks.
     """
-    soc_df = pd.read_excel(
+    # CSV export of the SOC2020 descriptions workbook. As with the index,
+    # there may be leading informational rows before the header, so scan
+    # for the row that contains the expected column names.
+    header_row_index = 0
+    with open(filepath, encoding="utf-8") as csv_file:
+        for i, line in enumerate(csv_file):
+            if "SOC 2020 Unit Group" in line and "Group  Description" in line:
+                header_row_index = i
+                break
+
+    soc_df = pd.read_csv(
         filepath,
-        sheet_name="SOC2020 descriptions",
+        skiprows=header_row_index,
         usecols=[
             "SOC\n2020 Major Group",
             "SOC\n2020 Sub-Major Group",
