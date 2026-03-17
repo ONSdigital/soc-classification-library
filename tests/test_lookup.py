@@ -76,13 +76,14 @@ def test_soc_lookup_find_code_for_title(
     ],
 )
 def test_lookup(soc_lookup_fixture, description, expected_code, expected_major_group):
-    """Tests lookup() returns code and major group; meta is None when using CSV (mirrors SIC)."""
+    """Tests lookup() returns code, major group and metadata (mirrors SIC)."""
     result = soc_lookup_fixture.lookup(description)
     assert result["description"] == description
     assert result["code"] == expected_code
     assert result["code_major_group"] == expected_major_group
-    assert result["code_meta"] is None
-    assert result["code_major_group_meta"] is None
+    # With always-on SocMeta, code_meta and major-group meta should be populated
+    assert result["code_meta"] is not None
+    assert result["code_major_group_meta"] is not None
 
 
 @pytest.mark.parametrize(
@@ -93,10 +94,10 @@ def test_lookup(soc_lookup_fixture, description, expected_code, expected_major_g
     ],
 )
 def test_lookup_code_major_group(soc_lookup_fixture, code, expected_major_group):
-    """Tests lookup_code_major_group returns major group from code; meta None with CSV (mirrors SIC)."""
+    """Tests lookup_code_major_group returns major group from code with metadata (mirrors SIC)."""
     result = soc_lookup_fixture.lookup_code_major_group(code)
     assert result["code_major_group"] == expected_major_group
-    assert result["code_major_group_meta"] is None
+    assert result["code_major_group_meta"] is not None
 
 
 @pytest.mark.parametrize(
@@ -107,19 +108,20 @@ def test_lookup_code_major_group(soc_lookup_fixture, code, expected_major_group)
     ],
 )
 def test_unique_code_major_group(soc_lookup_fixture, candidates, expected_major_groups):
-    """Tests unique_code_major_group returns unique major groups; meta None with CSV (mirrors SIC)."""
+    """Tests unique_code_major_group returns unique major groups with metadata (mirrors SIC)."""
     result = soc_lookup_fixture.unique_code_major_group(candidates)
     assert len(result) == len(expected_major_groups)
     got = sorted(r["code_major_group"] for r in result)
     assert got == sorted(expected_major_groups)
     for item in result:
-        assert item["code_major_group_meta"] is None
+        assert item["code_major_group_meta"] is not None
 
 
 def test_lookup_no_match(soc_lookup_fixture):
     """Tests lookup when no match is found (mirrors SIC test_lookup_no_match)."""
     result = soc_lookup_fixture.lookup("nonexistent description")
     assert result["code"] is None
+    # When there is no matching code, meta should also be None.
     assert result["code_meta"] is None
     assert result["code_major_group_meta"] is None
 
