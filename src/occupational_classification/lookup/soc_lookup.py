@@ -59,15 +59,20 @@ class SOCLookup:
             )
 
         if data_path.lower().endswith(".csv"):
-            # Example CSV path: behave like SICLookup (CSV + lower-cased descriptions),
-            # and do not require any external SOC Excel data or config.
+            # CSV-backed lookup data (example or full index export).
             self.data = pd.read_csv(data_path, dtype=str)
             self.data["description"] = self.data["description"].str.lower()
-            self.meta: SocMeta | None = None
         else:
-            # Explicit, opt-in Excel/index path driven by config.
+            # Legacy/explicit path for callers that still provide a non-CSV index.
             self.data = self.data_preparation(data_path)
-            self.meta = SocMeta(get_config()["data_source"]["soc_structure"])
+
+        # Always attach metadata from the SOC structure so, like SIC, lookups
+        # can enrich results with code and major-group meta regardless of
+        # whether the lookup data comes from the small example CSV or a full
+        # index export.
+        self.meta: SocMeta | None = SocMeta(
+            get_config()["data_source"]["soc_structure"]
+        )
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
