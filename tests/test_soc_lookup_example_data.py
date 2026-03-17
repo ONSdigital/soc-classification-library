@@ -27,6 +27,10 @@ def test_soc_lookup_example_exact_match():
 
     assert result["code"] == "1111"
     assert result["description"] == "chief executives and senior officials"
+    # With always-on SocMeta, metadata should be present for the example code
+    assert result["code_meta"] is not None
+    assert result["code_major_group"] == "1"
+    assert result["code_major_group_meta"] is not None
 
 
 def test_soc_lookup_example_similarity():
