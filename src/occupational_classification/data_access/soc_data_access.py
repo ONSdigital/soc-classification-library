@@ -3,6 +3,8 @@
 Filepaths are provided in config: "src.occupational_classification._config".
 """
 
+from pathlib import Path
+
 import pandas as pd
 
 
@@ -67,7 +69,7 @@ def load_soc_index(filepath: str) -> pd.DataFrame:
     return soc_index_df
 
 
-def load_soc_structure(filepath: str) -> pd.DataFrame:
+def load_soc_structure(filepath: str | Path) -> pd.DataFrame:
     """Load SOC structure.
 
     Provides structure with all levels and names of the SOC 2020.
@@ -80,31 +82,50 @@ def load_soc_structure(filepath: str) -> pd.DataFrame:
         group description, typical entry routes and associated qualifications,
         and list of tasks.
     """
-    # CSV export of the SOC2020 descriptions workbook. As with the index,
-    # there may be leading informational rows before the header, so scan
-    # for the row that contains the expected column names.
-    header_row_index = 0
-    with open(filepath, encoding="utf-8") as csv_file:
-        for i, line in enumerate(csv_file):
-            if "SOC 2020 Unit Group" in line and "Group  Description" in line:
-                header_row_index = i
-                break
+    filepath = Path(filepath)
+    if filepath.suffix.lower() == ".csv":
+        # CSV export of the SOC2020 descriptions workbook. As with the index,
+        # there may be leading informational rows before the header, so scan
+        # for the row that contains the expected column names.
+        header_row_index = 0
+        with open(filepath, encoding="utf-8") as csv_file:
+            for i, line in enumerate(csv_file):
+                if "SOC 2020 Unit Group" in line and "Group  Description" in line:
+                    header_row_index = i
+                    break
 
-    soc_df = pd.read_csv(
-        filepath,
-        skiprows=header_row_index,
-        usecols=[
-            "SOC\n2020 Major Group",
-            "SOC\n2020 Sub-Major Group",
-            "SOC\n2020 Minor Group",
-            "SOC 2020 Unit Group",
-            "SOC\n2020 \nGroup Title",
-            "Typical Entry Routes And Associated Qualifications",
-            "Group  Description",
-            "Tasks",
-        ],
-        dtype=str,
-    )
+        soc_df = pd.read_csv(
+            filepath,
+            skiprows=header_row_index,
+            usecols=[
+                "SOC\n2020 Major Group",
+                "SOC\n2020 Sub-Major Group",
+                "SOC\n2020 Minor Group",
+                "SOC 2020 Unit Group",
+                "SOC\n2020 \nGroup Title",
+                "Typical Entry Routes And Associated Qualifications",
+                "Group  Description",
+                "Tasks",
+            ],
+            dtype=str,
+        )
+    else:
+        # Original Excel workbook path (e.g. Volume 1 structure).
+        soc_df = pd.read_excel(
+            filepath,
+            sheet_name="SOC2020 descriptions",
+            usecols=[
+                "SOC\n2020 Major Group",
+                "SOC\n2020 Sub-Major Group",
+                "SOC\n2020 Minor Group",
+                "SOC 2020 Unit Group",
+                "SOC\n2020 \nGroup Title",
+                "Typical Entry Routes And Associated Qualifications",
+                "Group  Description",
+                "Tasks",
+            ],
+            dtype=str,
+        )
     soc_df.columns = [
         col.lower().replace(" ", "_").replace("__", "_").replace("\n", "")
         for col in soc_df.columns
