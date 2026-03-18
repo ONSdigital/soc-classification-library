@@ -11,7 +11,7 @@ official ONS SOC 2020 structure and coding index.
 
 - SOC Lookup.  A utility that uses a well-known set of SOC mappings of job titles to SOC classification codes.
 - SOC Classification. A RAG approach to classification of SOC using input data, semantic search and LLM.
- - SOC Rephrase. Packaged example data and `SOCRephraseLookup` for mapping `soc_code` values to respondent-friendly rephrased descriptions.
+- SOC Rephrase. Packaged example data and `SOCRephraseLookup` for mapping `soc_code` values to respondent-friendly rephrased descriptions.
 
 ## Prerequisites
 
@@ -55,6 +55,11 @@ There is example source for using the SOC Lookup functionality in soc_lookup_exa
 ```bash
 poetry run python src/occupational_classification/lookup/soc_lookup_example.py
 ```
+
+The library also ships with small packaged example datasets used by downstream services (e.g. `survey-assist-api`) for end-to-end testing:
+
+- SOC lookup example CSV: `src/occupational_classification/data/example_soc_lookup_data.csv`
+- SOC rephrase example CSV: `src/occupational_classification/data/example_rephrased_soc_data.csv`
 
 
 ### GCP Setup
