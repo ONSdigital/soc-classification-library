@@ -16,13 +16,13 @@ This utility provides functions for classifying the Standard Occupational Code, 
 To use this code in another repository using ssh:
 
 ```bash
-poetry add git+ssh://git@/ONSdigital/soc-classification-library.git@v0.0.1
+poetry add git+ssh://git@github.com/ONSdigital/soc-classification-library.git@v0.1.4
 ```
 
 or https:
 
 ```bash
-poetry add git+https://github.com/ONSdigital/soc-classification-library.git@v.0.0.1
+poetry add git+https://github.com/ONSdigital/soc-classification-library.git@v0.1.4
 ```
 
 ### Usage
