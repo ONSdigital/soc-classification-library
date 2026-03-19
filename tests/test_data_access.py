@@ -5,6 +5,7 @@
 from unittest.mock import patch
 
 import pandas as pd
+import pytest
 
 from src.occupational_classification.data_access import soc_data_access
 
@@ -53,8 +54,22 @@ def test_combine_job_title_non_string():
 # load_soc_index()
 
 
-def test_load_soc_index_load(tmp_path):
-    """Test basic functionality with a mock CSV file."""
+@pytest.fixture
+def mock_excel():
+    """Replace pd.read_excel with the mock function for the test."""
+    original_read_excel = pd.read_excel
+
+    def mock_read_excel(filepath, sheet_name, usecols, dtype):
+        """Mocks the pd.read_excel function."""
+        return pd.DataFrame()
+
+    pd.read_excel = mock_read_excel
+    yield
+    pd.read_excel = original_read_excel
+
+
+def test_load_soc_index_load(mock_excel):
+    """Test basic functionality with a mock excel file."""
     mock_data = {
         "SOC_2020": ["1111", "2222", "3333"],
         "INDEXOCC_-_natural_word_order": ["Teacher", "Engineer", "Manager"],
@@ -62,10 +77,8 @@ def test_load_soc_index_load(tmp_path):
         "IND": ["secondary school", "broadcasting", "garage"],
     }
     mock_df = pd.DataFrame(mock_data)
-    csv_path = tmp_path / "soc_index.csv"
-    mock_df.to_csv(csv_path, index=False)
-    with patch("pandas.read_csv", return_value=mock_df):
-        df = soc_data_access.load_soc_index(str(csv_path))
+    with patch("pandas.read_excel", return_value=mock_df):
+        df = soc_data_access.load_soc_index("filepath.xlsx")
     expected_data = {
         "code": ["1111", "2222", "3333"],
         "title": [
@@ -78,7 +91,7 @@ def test_load_soc_index_load(tmp_path):
     pd.testing.assert_frame_equal(df, expected_df)
 
 
-def test_load_soc_index_code_filter(tmp_path):
+def test_load_soc_index_code_filter(mock_excel):
     """Test the code filter for '}}}}'."""
     mock_data = {
         "SOC_2020": ["1111", "}}}}"],
@@ -87,10 +100,8 @@ def test_load_soc_index_code_filter(tmp_path):
         "IND": ["secondary school", "broadcasting"],
     }
     mock_df = pd.DataFrame(mock_data)
-    csv_path = tmp_path / "soc_index.csv"
-    mock_df.to_csv(csv_path, index=False)
-    with patch("pandas.read_csv", return_value=mock_df):
-        df = soc_data_access.load_soc_index(str(csv_path))
+    with patch("pandas.read_excel", return_value=mock_df):
+        df = soc_data_access.load_soc_index("filepath.xlsx")
     expected_data = {
         "code": ["1111"],
         "title": [
@@ -101,7 +112,7 @@ def test_load_soc_index_code_filter(tmp_path):
     pd.testing.assert_frame_equal(df, expected_df)
 
 
-def test_load_soc_index_dropna(tmp_path):
+def test_load_soc_index_dropna(mock_excel):
     """Test the rows with missing values for 'code' or
     'INDEXOCC_-_natural_word_order' are dropped.
     """
@@ -112,10 +123,8 @@ def test_load_soc_index_dropna(tmp_path):
         "IND": ["secondary school", "broadcasting", "garage"],
     }
     mock_df = pd.DataFrame(mock_data)
-    csv_path = tmp_path / "soc_index.csv"
-    mock_df.to_csv(csv_path, index=False)
-    with patch("pandas.read_csv", return_value=mock_df):
-        df = soc_data_access.load_soc_index(str(csv_path))
+    with patch("pandas.read_excel", return_value=mock_df):
+        df = soc_data_access.load_soc_index("filepath.xlsx")
     expected_data = {
         "code": ["1111"],
         "title": [
