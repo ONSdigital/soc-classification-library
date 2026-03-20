@@ -1,7 +1,10 @@
 [soc-classification-library]
 
 [data_source]
+# NOTE:
+# This section is read by get_config() and is the active source for soc_index/soc_structure paths.
+# Relative paths resolve from the current runtime working directory (for survey-assist-api Cloud Run: /app).
 
-soc_index = "../soc-classification-vector-store/src/soc_classification_vector_store/data/soc_index/soc2020volume2thecodingindexexcel16042025.xlsx"
+soc_index = "data/soc_index/soc2020volume2thecodingindexexcel16042025.xlsx"
 
-soc_structure = "../soc-classification-vector-store/src/soc_classification_vector_store/data/soc_index/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx"
+soc_structure = "data/soc_index/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx"
