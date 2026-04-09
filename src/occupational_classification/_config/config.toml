@@ -2,6 +2,6 @@
 
 [data_source]
 
-soc_index = "../soc-classification-vector-store/src/soc_classification_vector_store/data/soc_index/soc2020volume2thecodingindexexcel16042025.xlsx"
+soc_index = "src/occupational_classification/data/example_soc_lookup_data.csv"
 
-soc_structure = "../soc-classification-vector-store/src/soc_classification_vector_store/data/soc_index/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx"
+soc_structure = "src/occupational_classification/data/example_soc_lookup_data.csv"
