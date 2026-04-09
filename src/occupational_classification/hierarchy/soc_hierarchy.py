@@ -4,11 +4,10 @@ Usage: provides information regarding the specified code.
     soc["1"].
 """
 
-from typing import Optional, Union
+from typing import Union
 
 import pandas as pd
 
-from occupational_classification._config.main import get_config
 from occupational_classification.meta.soc_meta import SocMeta
 
 _LEVEL_DICT = {1: "Major", 2: "Sub-Major", 3: "Minor", 4: "Unit"}
@@ -232,12 +231,12 @@ class SOC:
         return df
 
 
-def _define_codes_and_nodes(soc_df: pd.DataFrame, structure_data_path: str):
+def _define_codes_and_nodes(soc_df: pd.DataFrame):
     """Creates codes list, nodes list and code_node_dict dictionary.
 
     Later used for SOC.
     """
-    soc_meta = SocMeta(structure_data_path=structure_data_path)
+    soc_meta = SocMeta()
     codes = []
     nodes = []
 
@@ -265,9 +264,9 @@ def _populate_parent_child_relationships(nodes: list, code_node_dict: dict):
             code_node_dict[node.soc_code].parent = code_node_dict[parent_code]
 
 
-def _populate_tasks_and_quals(nodes: list, structure_data_path: str):
+def _populate_tasks_and_quals(nodes: list):
     """Populate tasks and qualifications. Modifies nodes in places."""
-    soc_meta = SocMeta(structure_data_path=structure_data_path)
+    soc_meta = SocMeta()
     for node in nodes:
         code = node.soc_code
         if SocCode(code).code_length() == _SOC_CODE_LENGTH:
@@ -275,7 +274,7 @@ def _populate_tasks_and_quals(nodes: list, structure_data_path: str):
             node.qualifications = qual
 
             tasks_list = soc_meta.get_meta_by_code(code)["tasks"]
-            node.tasks = tasks_list[1:]
+            node.tasks = tasks_list
 
 
 def _populate_job_titles(nodes: list, soc_index: pd.DataFrame):
@@ -305,7 +304,6 @@ def find_parent(code) -> Union[str, None]:
 def load_hierarchy(
     soc_df: pd.DataFrame,
     soc_index: pd.DataFrame,
-    structure_data_path: Optional[str] = None,
 ):
     """Create the SOC lookups from all supporting data.
 
@@ -316,15 +314,11 @@ def load_hierarchy(
     Once created this provides a single point of access for all
     data associated with a SOC definition.
     """
-    if structure_data_path is None:
-        structure_data_path = get_config()["data_source"]["soc_structure"]
-    _codes, nodes, code_node_dict = _define_codes_and_nodes(
-        soc_df, structure_data_path=structure_data_path
-    )
+    _codes, nodes, code_node_dict = _define_codes_and_nodes(soc_df)
 
     _populate_parent_child_relationships(nodes, code_node_dict)
 
-    _populate_tasks_and_quals(nodes, structure_data_path=structure_data_path)
+    _populate_tasks_and_quals(nodes)
 
     _populate_job_titles(nodes, soc_index)
 
