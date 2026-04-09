@@ -148,6 +148,15 @@ def test_soc_lookup_default_path_uses_example_csv():
     assert result["code_major_group"] == "1"
 
 
+def test_soc_lookup_rejects_non_csv_path(tmp_path):
+    """SOCLookup rejects legacy non-CSV lookup paths."""
+    fake_path = tmp_path / "legacy_lookup.xlsx"
+    fake_path.write_text("placeholder", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="must point to a CSV file"):
+        SOCLookup(data_path=str(fake_path))
+
+
 # --- SOCRephraseLookup tests (mirrors SIC rephrase coverage) ---
 
 
