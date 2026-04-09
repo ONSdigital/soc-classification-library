@@ -1,98 +1,72 @@
-"""Provide data access for key files.
+"""Provide CSV data access for SOC lookup and hierarchy.
 
-Filepaths are provided in config: "src.occupational_classification._config".
+Aligned with ``sic-classification-library``: no Excel loaders in this package.
+Index and structure are derived from a lookup CSV (``description``, ``label``)
+such as ``example_soc_lookup_data.csv``.
 """
 
 import pandas as pd
 
 
-def combine_job_title(row: pd.Series) -> str:
-    """Produces full job title wih IND and ADD qualifiers.
-
-    Args:
-        row (pd.Series): A row containing job title, IND and ADD qualifiers
-        for a specific SOC code.
-
-    Returns:
-        str: A string with combined full job title.
-    """
-    job_title = row["natural_word"]
-    if pd.notna(row["add"]):
-        job_title = f"{row['add']} " + job_title
-    if pd.notna(row["ind"]):
-        job_title += f" ({row['ind']})"
-    return job_title
+def _require_lookup_csv(path: str) -> None:
+    if not str(path).lower().endswith(".csv"):
+        raise ValueError(
+            "SOC data loads from lookup CSV only (.csv); Excel workbooks are not supported."
+        )
 
 
 def load_soc_index(filepath: str) -> pd.DataFrame:
-    """Load SOC index.
-    Provides a list of over 32,000 titles associated with employment.
+    """Load SOC index columns ``code`` and ``title`` from a lookup CSV.
+
+    The file must contain ``description`` and ``label`` columns. ``label`` is
+    the SOC unit code.
 
     Args:
-        filepath (str): A path to the file containing SOC Index.
+        filepath: Path to the CSV file.
 
     Returns:
-        pd.DataFrame: A DataFrame with transformed job titles.
+        DataFrame with ``code`` and ``title`` (title capitalised per prior convention).
     """
-    soc_index_df = pd.read_excel(
-        filepath,
-        sheet_name="SOC2020 coding index",
-        usecols=["SOC_2020", "INDEXOCC_-_natural_word_order", "ADD", "IND"],
-        dtype=str,
-    )
+    _require_lookup_csv(filepath)
+    df = pd.read_csv(filepath, dtype=str)
+    required = {"description", "label"}
+    if not required.issubset(df.columns):
+        missing = required - set(df.columns)
+        raise ValueError(f"Lookup CSV missing columns: {sorted(missing)}")
 
-    soc_index_df.columns = [col.lower() for col in soc_index_df.columns]
-
-    soc_index_df = soc_index_df.rename(
-        columns={"indexocc_-_natural_word_order": "natural_word", "soc_2020": "code"}
-    )
-
-    soc_index_df = soc_index_df[soc_index_df["code"] != "}}}}"]
-    soc_index_df = soc_index_df.dropna(subset=["code", "natural_word"])
-    soc_index_df["title"] = soc_index_df.apply(combine_job_title, axis=1)
-    soc_index_df = soc_index_df[["code", "title"]]
-    soc_index_df["title"] = soc_index_df["title"].str.capitalize()
-
-    return soc_index_df
+    out = df[["label", "description"]].copy()
+    out = out.rename(columns={"label": "code", "description": "title"})
+    out = out.dropna(subset=["code", "title"])
+    out["code"] = out["code"].astype(str).str.strip()
+    out["title"] = out["title"].astype(str).str.strip().str.capitalize()
+    out = out[out["code"].str.fullmatch(r"\d+")]
+    return out.reset_index(drop=True)
 
 
 def load_soc_structure(filepath: str) -> pd.DataFrame:
-    """Load SOC structure.
+    """Build minimal SOC structure (``code`` column) from the same lookup CSV.
 
-    Provides structure with all levels and names of the SOC 2020.
+    Expands every unit code in ``label`` into itself and all numeric prefixes
+    (e.g. ``2314`` → ``2``, ``23``, ``231``, ``2314``) for ``load_hierarchy``.
 
     Args:
-        filepath (str): A path to the file containing SOC Structure.
+        filepath: Path to a CSV that includes a ``label`` column of SOC codes.
 
     Returns:
-        pd.DataFrame: A DataFrame containing group code, group title,
-        group description, typical entry routes and associated qualifications,
-        and list of tasks.
+        DataFrame with a single ``code`` column, sorted by length then value.
     """
-    soc_df = pd.read_excel(
-        filepath,
-        sheet_name="SOC2020 descriptions",
-        usecols=[
-            "SOC\n2020 Major Group",
-            "SOC\n2020 Sub-Major Group",
-            "SOC\n2020 Minor Group",
-            "SOC 2020 Unit Group",
-            "SOC\n2020 \nGroup Title",
-            "Typical Entry Routes And Associated Qualifications",
-            "Group  Description",
-            "Tasks",
-        ],
-        dtype=str,
-    )
-    soc_df.columns = [
-        col.lower().replace(" ", "_").replace("__", "_").replace("\n", "")
-        for col in soc_df.columns
-    ]
-    soc_df = soc_df.rename(
-        columns={"typical_entry_routes_and_associated_qualifications": "qualifications"}
-    )
+    _require_lookup_csv(filepath)
+    df = pd.read_csv(filepath, dtype=str)
+    if "label" not in df.columns:
+        raise ValueError("Lookup CSV must contain a 'label' column")
 
-    for col in soc_df.columns:
-        soc_df[col] = soc_df[col].str.strip()
+    codes: set[str] = set()
+    for raw in df["label"].dropna():
+        label = str(raw).strip()
+        if not label.isdigit():
+            continue
+        for i in range(1, len(label) + 1):
+            codes.add(label[:i])
 
-    return soc_df
+    sorted_codes = sorted(codes, key=lambda c: (len(c), c))
+    return pd.DataFrame({"code": sorted_codes})
