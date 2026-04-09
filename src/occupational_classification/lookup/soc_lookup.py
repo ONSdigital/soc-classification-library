@@ -19,10 +19,6 @@ from typing import Any, Optional, Union
 
 import pandas as pd
 
-from occupational_classification._config.main import get_config
-from occupational_classification.data_access.soc_data_access import (
-    load_soc_index,
-)
 from occupational_classification.meta.soc_meta import SocMeta
 
 UNIT_CODE_LEN = 4
@@ -58,40 +54,18 @@ class SOCLookup:
                 "src/occupational_classification/data/example_soc_lookup_data.csv"
             )
 
-        if data_path.lower().endswith(".csv"):
-            # CSV-backed lookup data (example or full index export).
-            self.data = pd.read_csv(data_path, dtype=str)
-            self.data["description"] = self.data["description"].str.lower()
-        else:
-            # Legacy/explicit path for callers that still provide a non-CSV index.
-            self.data = self.data_preparation(data_path)
+        if not data_path.lower().endswith(".csv"):
+            raise ValueError("SOCLookup data_path must point to a CSV file")
 
-        # Always attach metadata from the SOC structure so, like SIC, lookups
-        # can enrich results with code and major-group meta regardless of
-        # whether the lookup data comes from the small example CSV or a full
-        # index export.
-        self.meta: SocMeta | None = SocMeta(
-            get_config()["data_source"]["soc_structure"]
-        )
+        # CSV-backed lookup data (example or full index export).
+        self.data = pd.read_csv(data_path, dtype=str)
+        self.data["description"] = self.data["description"].str.lower()
+
+        # CSV-backed metadata, mirroring SIC's in-library startup pattern.
+        self.meta: SocMeta | None = SocMeta()
         self.lookup_dict: dict[str, str] = self.data.set_index("description").to_dict()[
             "label"
         ]
-
-    def data_preparation(self, data_path):
-        """Converts the Excel index data into a useful format for lookup.
-
-        This is an explicit, opt-in path for callers that want to use
-        the full SOC index from the ONS Excel source instead of the
-        lightweight CSV example dataset.
-
-        Returns:
-            pd.DataFrame: A DataFrame containing data useful for lookups.
-        """
-        data = load_soc_index(data_path)
-        data["label"] = data["code"]
-        data["description"] = data["title"].str.lower()
-        data = data.drop(["title", "code"], axis=1)
-        return data
 
     def lookup(self, description: str, similarity: bool = False) -> dict[str, Any]:
         """Looks up an SOC code based on the given description.
@@ -135,8 +109,7 @@ class SOCLookup:
 
             major_groups: list[dict[str, Any]] = []
             if self.meta is not None:
-                # Get meta data associated with each major group code when metadata
-                # is available (Excel/index-backed lookups).
+                # Get metadata associated with each major group code.
                 major_groups = [
                     {
                         "code": major_group_code,
