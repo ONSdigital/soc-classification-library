@@ -13,7 +13,7 @@ from occupational_classification.data_access.soc_data_access import (
 )
 from occupational_classification.hierarchy import soc_hierarchy
 from occupational_classification.lookup.soc_lookup import SOCLookup, SOCRephraseLookup
-from occupational_classification.meta.soc_meta import SocDB, SocMeta
+from occupational_classification.meta.soc_meta import SOC_META, SocMeta
 
 # %% [markdown]
 # ### Read the data from files using get_config()
@@ -34,7 +34,7 @@ soc_index.sample(5)
 # ### Perform data operations on columns for soc structure file.
 
 # %%
-soc_df = SocDB.create_soc_dataframe(soc_df_input)
+soc_df = load_soc_structure(get_config()["data_source"]["soc_structure"])
 
 # %%
 soc_df.sample(5)
@@ -129,19 +129,19 @@ print(processed_json)
 # ## Other methods to access meta
 
 # %%
-soc_meta = SocMeta(get_config()["data_source"]["soc_structure"])
+soc_meta = SocMeta()
 
 # %%
-soc_meta.soc_meta[3]
+SOC_META["3"]
 
 # %% [markdown]
 # Possible to go through code, soc2020_group_title, group_description, qualifications, and tasks.
 
 # %%
-soc_meta.soc_meta[3].get("group_description")
+SOC_META["3"].get("group_description")
 
 # %%
-soc_lookup.meta.soc_meta[3]
+SOC_META["3"]
 
 # %%
 soc_lookup.meta.get_meta_by_code("2431")
