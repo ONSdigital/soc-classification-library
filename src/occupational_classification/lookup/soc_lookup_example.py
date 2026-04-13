@@ -20,7 +20,7 @@ print("Example usage of SOCLookup")
 soc_lookup = SOCLookup(
     data_path="src/occupational_classification/data/example_soc_lookup_data.csv"
 )
-result = soc_lookup.lookup("Barista")
+result = soc_lookup.lookup("chief executives and senior officials")
 print(result)
 
 print("\n")
@@ -34,7 +34,7 @@ print(result)
 print("\n")
 print("Example usage of SOCLookup with unique code major group")
 result_list: list[dict[str, Any]] = soc_lookup.unique_code_major_group(
-    [{"soc_code": "1111"}, {"soc_code": "2111"}, {"soc_code": "9265"}]
+    [{"soc_code": "1111"}, {"soc_code": "2111"}, {"soc_code": "4111"}]
 )
 print(result_list)
 
