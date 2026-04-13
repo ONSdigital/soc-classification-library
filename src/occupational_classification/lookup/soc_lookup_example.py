@@ -13,18 +13,21 @@ Example Usage:
 
 from typing import Any
 
-from occupational_classification._config.main import get_config
 from occupational_classification.lookup.soc_lookup import SOCLookup, SOCRephraseLookup
 
 # Example usage of SOCLookup
 print("Example usage of SOCLookup")
-soc_lookup = SOCLookup(data_path=get_config()["data_source"]["soc_index"])
+soc_lookup = SOCLookup(
+    data_path="src/occupational_classification/data/example_soc_lookup_data.csv"
+)
 result = soc_lookup.lookup("Barista")
 print(result)
 
 print("\n")
 print("Example usage of SOCLookup with code major group")
-soc_lookup = SOCLookup(data_path=get_config()["data_source"]["soc_index"])
+soc_lookup = SOCLookup(
+    data_path="src/occupational_classification/data/example_soc_lookup_data.csv"
+)
 result = soc_lookup.lookup_code_major_group("1111")
 print(result)
 
@@ -38,7 +41,9 @@ print(result_list)
 print("\n")
 print("Example usage of SOCRephraseLookup with lookup")
 # Example usage of SOCRephraseLookup
-soc_rephrase_lookup = SOCRephraseLookup()
+soc_rephrase_lookup = SOCRephraseLookup(
+    data_path="src/occupational_classification/data/example_rephrased_soc_data.csv"
+)
 
 # Retrieve reviewed description for a specific SOC code
 rephrased_result = soc_rephrase_lookup.lookup("1111")
