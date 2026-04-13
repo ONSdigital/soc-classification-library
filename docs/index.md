@@ -10,8 +10,6 @@ This library follows the same startup style as the SIC library:
 - Lookup and hierarchy loading are CSV-only.
 - Metadata is provided in-library via `SocMeta` (code-embedded metadata).
 
-Legacy Excel/config-driven lookup startup paths were removed in SA-649 and are not supported.
-
 ## Data sources
 
 Packaged example datasets are the default for local testing and downstream integration:
@@ -20,6 +18,9 @@ Packaged example datasets are the default for local testing and downstream integ
 - `src/occupational_classification/data/example_rephrased_soc_data.csv`
 
 Official ONS SOC publications can still be used as reference material when preparing your own CSV extracts, but they are not required at constructor/startup time.
+
+- [SOC 2020 Volume 1: structure and descriptions of unit groups](https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume1structureanddescriptionsofunitgroups). Download [link](https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume1structureanddescriptionsofunitgroups/soc2020volume1structureanddescriptionofunitgroupsexcel16042025.xlsx)
+- [SOC 2020 Volume 2: the coding index](https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume2codingrulesandconventions). Download [link](https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume2codingrulesandconventions/soc2020volume2thecodingindexexcel16042025v2.xlsx)
 
 ## Available Utilities
 
