@@ -45,10 +45,10 @@ class SOCLookup:
 
         Args:
             data_path (str | None): The path to the SOC lookup data.
-                When None, uses the example CSV dataset by default (CSV-first,
-                mirroring SICLookup behaviour).
+                When None, uses the example dataset by default, mirroring
+                SICLookup startup behaviour.
         """
-        # CSV-first default, analogous to SICLookup.
+        # Default startup mirrors SICLookup.
         if data_path is None:
             data_path = (
                 "src/occupational_classification/data/example_soc_lookup_data.csv"
