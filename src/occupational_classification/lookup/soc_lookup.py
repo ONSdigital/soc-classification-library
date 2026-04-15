@@ -24,6 +24,22 @@ from occupational_classification.meta.soc_meta import SocMeta
 UNIT_CODE_LEN = 4
 
 
+def _normalise_lookup_dataframe(data: pd.DataFrame) -> pd.DataFrame:
+    text_col = "documents"
+    code_col = "label"
+    if text_col not in data.columns or code_col not in data.columns:
+        raise ValueError(
+            "SOCLookup CSV missing required columns. "
+            "Expected columns ['documents', 'label']."
+        )
+    out = data[[text_col, code_col]].copy()
+    out = out.rename(columns={text_col: "description", code_col: "label"})
+    out["description"] = out["description"].astype(str).str.strip().str.lower()
+    out["label"] = out["label"].astype(str).str.strip()
+    out = out.dropna(subset=["description", "label"])
+    return out
+
+
 class SOCLookup:
     """A class for performing lookups of SOC codes based on descriptions.
 
@@ -58,8 +74,7 @@ class SOCLookup:
             raise ValueError("SOCLookup data_path must point to a CSV file")
 
         # CSV-backed lookup data (example or full index export).
-        self.data = pd.read_csv(data_path, dtype=str)
-        self.data["description"] = self.data["description"].str.lower()
+        self.data = _normalise_lookup_dataframe(pd.read_csv(data_path, dtype=str))
 
         # CSV-backed metadata, mirroring SIC's in-library startup pattern.
         self.meta: SocMeta | None = SocMeta()
