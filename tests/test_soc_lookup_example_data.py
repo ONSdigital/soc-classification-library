@@ -17,9 +17,9 @@ def _get_example_csv_path() -> str:
 def test_soc_lookup_example_exact_match():
     """SOCLookup returns expected code for an exact description from the example CSV."""
     csv_path = _get_example_csv_path()
-    # Sanity check that the CSV is readable and has expected columns
+    # Sanity check that the CSV is readable and has the strict SA-649 schema.
     df = pd.read_csv(csv_path, dtype=str)
-    assert "description" in df.columns
+    assert "documents" in df.columns
     assert "label" in df.columns
 
     lookup = SOCLookup(data_path=csv_path)
