@@ -25,7 +25,7 @@ def mock_data(tmp_path):
     data = pd.DataFrame(
         {
             "label": ["4111", "8139", "1131", "2112"],
-            "description": [
+            "documents": [
                 "benefits fraud investigator (government)",
                 "saw doctor",
                 "vice president (banking)",
@@ -155,6 +155,20 @@ def test_soc_lookup_rejects_non_csv_path(tmp_path):
 
     with pytest.raises(ValueError, match="must point to a CSV file"):
         SOCLookup(data_path=str(fake_path))
+
+
+def test_soc_lookup_rejects_legacy_description_column(tmp_path):
+    data = pd.DataFrame(
+        {
+            "description": ["primary teacher", "zoologist"],
+            "label": ["2314", "2112"],
+        }
+    )
+    file_path = tmp_path / "soc_lookup_legacy.csv"
+    data.to_csv(file_path, index=False)
+
+    with pytest.raises(ValueError, match="Expected columns"):
+        SOCLookup(data_path=str(file_path))
 
 
 # --- SOCRephraseLookup tests (mirrors SIC rephrase coverage) ---
