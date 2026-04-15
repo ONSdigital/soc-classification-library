@@ -15,11 +15,22 @@ def _require_lookup_csv(path: str) -> None:
         )
 
 
+def _resolve_lookup_columns(df: pd.DataFrame) -> tuple[str, str]:
+    text_col = "documents"
+    code_col = "label"
+    if text_col not in df.columns or code_col not in df.columns:
+        raise ValueError(
+            "Lookup CSV missing required columns. "
+            "Expected columns ['documents', 'label']."
+        )
+    return text_col, code_col
+
+
 def load_soc_index(filepath: str) -> pd.DataFrame:
     """Load SOC index columns ``code`` and ``title`` from a lookup CSV.
 
-    The file must contain ``description`` and ``label`` columns. ``label`` is
-    the SOC unit code.
+    The file must contain ``documents`` and ``label`` columns.
+    ``label`` is the SOC unit code.
 
     Args:
         filepath: Path to the CSV file.
@@ -29,13 +40,10 @@ def load_soc_index(filepath: str) -> pd.DataFrame:
     """
     _require_lookup_csv(filepath)
     df = pd.read_csv(filepath, dtype=str)
-    required = {"description", "label"}
-    if not required.issubset(df.columns):
-        missing = required - set(df.columns)
-        raise ValueError(f"Lookup CSV missing columns: {sorted(missing)}")
+    text_col, code_col = _resolve_lookup_columns(df)
 
-    out = df[["label", "description"]].copy()
-    out = out.rename(columns={"label": "code", "description": "title"})
+    out = df[[code_col, text_col]].copy()
+    out = out.rename(columns={code_col: "code", text_col: "title"})
     out = out.dropna(subset=["code", "title"])
     out["code"] = out["code"].astype(str).str.strip()
     out["title"] = out["title"].astype(str).str.strip().str.capitalize()
@@ -46,22 +54,21 @@ def load_soc_index(filepath: str) -> pd.DataFrame:
 def load_soc_structure(filepath: str) -> pd.DataFrame:
     """Build minimal SOC structure (``code`` column) from the same lookup CSV.
 
-    Expands every unit code in ``label`` into itself and all numeric prefixes
+    Expands every unit code in the SOC code column into itself and all numeric prefixes
     (e.g. ``2314`` → ``2``, ``23``, ``231``, ``2314``) for ``load_hierarchy``.
 
     Args:
-        filepath: Path to a CSV that includes a ``label`` column of SOC codes.
+        filepath: Path to a CSV that includes a SOC code column.
 
     Returns:
         DataFrame with a single ``code`` column, sorted by length then value.
     """
     _require_lookup_csv(filepath)
     df = pd.read_csv(filepath, dtype=str)
-    if "label" not in df.columns:
-        raise ValueError("Lookup CSV must contain a 'label' column")
+    _, code_col = _resolve_lookup_columns(df)
 
     codes: set[str] = set()
-    for raw in df["label"].dropna():
+    for raw in df[code_col].dropna():
         label = str(raw).strip()
         if not label.isdigit():
             continue
