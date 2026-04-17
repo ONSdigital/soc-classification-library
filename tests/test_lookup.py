@@ -247,3 +247,24 @@ def test_soc_rephrase_process_json_null_soc_code(soc_rephrase_lookup_fixture):
     }
     result = soc_rephrase_lookup_fixture.process_json(input_json)
     assert result["soc_description"] is None
+
+
+def test_soc_rephrase_lookup_supports_alias_columns(tmp_path):
+    """SOC rephrase lookup accepts common alias column names."""
+    data = pd.DataFrame(
+        {
+            "code": ["1139"],
+            "description_rephrased": ["Functional managers and directors other roles"],
+        }
+    )
+    file_path = tmp_path / "mock_rephrase_soc_alias_data.csv"
+    data.to_csv(file_path, index=False)
+
+    lookup = SOCRephraseLookup(data_path=str(file_path))
+    result = lookup.lookup("1139")
+
+    assert result["soc_code"] == "1139"
+    assert (
+        result["rephrased_description"]
+        == "Functional managers and directors other roles"
+    )
