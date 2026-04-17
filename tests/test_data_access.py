@@ -1,6 +1,6 @@
 """Tests for SOC data access utilities."""
 
-# pylint: disable=missing-function-docstring,redefined-outer-name,unused-argument
+# pylint: disable=missing-function-docstring,redefined-outer-name,unused-argument,duplicate-code
 
 from unittest.mock import ANY, patch
 
@@ -93,7 +93,9 @@ def soc_index_workbook_ref():
 
 @patch("src.occupational_classification.data_access.soc_data_access.files")
 @patch("src.occupational_classification.data_access.soc_data_access.pd.read_excel")
-def test_load_soc_index_from_workbook(mock_read_excel, mock_files, soc_index_workbook_ref):
+def test_load_soc_index_from_workbook(
+    mock_read_excel, mock_files, soc_index_workbook_ref
+):
     mock_files.return_value.joinpath.return_value = "dummy/soc_index.xlsx"
     mock_read_excel.return_value = pd.DataFrame(
         {
@@ -125,7 +127,10 @@ def test_load_soc_index_from_workbook(mock_read_excel, mock_files, soc_index_wor
 @patch("src.occupational_classification.data_access.soc_data_access.files")
 @patch("src.occupational_classification.data_access.soc_data_access.pd.read_excel")
 def test_load_soc_structure_from_workbook(mock_read_excel, mock_files):
-    soc_structure_workbook_ref = ("test.pkg", "soc2020volume1structureanddescriptionofunitgroupsexcel16102024.xlsx")
+    soc_structure_workbook_ref = (
+        "test.pkg",
+        "soc2020volume1structureanddescriptionofunitgroupsexcel16102024.xlsx",
+    )
     mock_files.return_value.joinpath.return_value = "dummy/soc_structure.xlsx"
     mock_read_excel.return_value = pd.DataFrame(
         {
@@ -157,8 +162,13 @@ def test_load_soc_structure_from_workbook(mock_read_excel, mock_files):
 
 @patch("src.occupational_classification.data_access.soc_data_access.files")
 @patch("src.occupational_classification.data_access.soc_data_access.pd.read_excel")
-def test_load_soc_hierarchy_workbook_resources(mock_read_excel, mock_files, soc_index_workbook_ref):
-    soc_structure_workbook_ref = ("test.pkg", "soc2020volume1structureanddescriptionofunitgroupsexcel16102024.xlsx")
+def test_load_soc_hierarchy_workbook_resources(
+    mock_read_excel, mock_files, soc_index_workbook_ref
+):
+    soc_structure_workbook_ref = (
+        "test.pkg",
+        "soc2020volume1structureanddescriptionofunitgroupsexcel16102024.xlsx",
+    )
     mock_files.return_value.joinpath.side_effect = [
         "dummy/soc_index.xlsx",
         "dummy/soc_structure.xlsx",
@@ -184,7 +194,10 @@ def test_load_soc_hierarchy_workbook_resources(mock_read_excel, mock_files, soc_
             }
         ),
     ]
-    soc = soc_data_access.load_soc_hierarchy(soc_index_workbook_ref, soc_structure_workbook_ref)
-    assert mock_files.call_count == 2
+    soc = soc_data_access.load_soc_hierarchy(
+        soc_index_workbook_ref, soc_structure_workbook_ref
+    )
+    expected_files_calls = 2
+    assert mock_files.call_count == expected_files_calls
     assert "2314" in soc.lookup
     assert soc["2314"].job_titles
