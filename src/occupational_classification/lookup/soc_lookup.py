@@ -228,7 +228,9 @@ class SOCRephraseLookup:
         self.data[code_col] = self.data[code_col].astype(str)
 
         # Create a lookup dictionary for quick access
-        self.lookup_dict: dict[str, str] = self.data.set_index(code_col)[desc_col].to_dict()
+        self.lookup_dict: dict[str, str] = self.data.set_index(code_col)[
+            desc_col
+        ].to_dict()
 
     def lookup(self, soc_code: Union[str, int]) -> dict[str, Union[str, Any]]:
         """Retrieve rephrased description for the given SOC code."""
