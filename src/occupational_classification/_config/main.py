@@ -99,7 +99,11 @@ def get_config(config_name: Optional[Union[Path, str]] = "config.toml") -> dict:
         for key, soc_data in in_config["data_source"].items():
             soc_data_path = check_file_exists(soc_data)
             if soc_data_path is None:
-                if key in ["soc_index", "soc_structure"]:
+                if key in [
+                    "soc_lookup_csv",
+                    "soc_index_workbook",
+                    "soc_structure_workbook",
+                ]:
                     raise FileNotFoundError(
                         f"Required soc_data file {key}: {soc_data} not found."
                     )
