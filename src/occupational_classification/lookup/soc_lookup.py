@@ -104,9 +104,7 @@ class SOCLookup:
         if matching_code:
             matching_code_major_group = matching_code[:1]
             if self.meta is not None:
-                matching_code_meta = self.meta.get_meta_by_code(
-                    matching_code, allow_parent_fallback=False
-                )
+                matching_code_meta = self.meta.get_meta_by_code(matching_code)
                 if "error" in matching_code_meta:
                     matching_code_meta = None
                 major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
@@ -221,19 +219,19 @@ class SOCRephraseLookup:
         Args:
             data_path: Path to the CSV file containing rephrased SOC descriptions.
         """
-        # Load SOC rephrased descriptions with tolerant column aliases to keep
-        # compatibility with evolving CSV schemas.
+        # Load SOC rephrased descriptions from the canonical schema only.
         self.data: pd.DataFrame = pd.read_csv(data_path)
-        code_col = self._find_column(self.data, ("soc_code", "code", "soc"))
-        desc_col = self._find_column(
-            self.data,
-            ("rephrased_description", "description_rephrased", "rephrased"),
-        )
-        self.data[code_col] = self.data[code_col].astype(str)
+        required_columns = {"soc_code", "rephrased_description"}
+        if not required_columns.issubset(self.data.columns):
+            raise ValueError(
+                "SOCRephraseLookup CSV missing required columns. "
+                "Expected columns ['soc_code', 'rephrased_description']."
+            )
+        self.data["soc_code"] = self.data["soc_code"].astype(str)
 
         # Create a lookup dictionary for quick access
-        self.lookup_dict: dict[str, str] = self.data.set_index(code_col)[
-            desc_col
+        self.lookup_dict: dict[str, str] = self.data.set_index("soc_code")[
+            "rephrased_description"
         ].to_dict()
 
     def lookup(self, soc_code: Union[str, int]) -> dict[str, Union[str, Any]]:
@@ -276,11 +274,3 @@ class SOCRephraseLookup:
 
         return input_json
 
-    @staticmethod
-    def _find_column(dataframe: pd.DataFrame, aliases: tuple[str, ...]) -> str:
-        """Return the first matching column name from known aliases."""
-        columns_map = {str(col).strip().lower(): str(col) for col in dataframe.columns}
-        for alias in aliases:
-            if alias in columns_map:
-                return columns_map[alias]
-        raise ValueError(f"CSV file must contain one of columns: {aliases}")
