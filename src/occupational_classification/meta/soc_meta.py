@@ -1,8 +1,4 @@
-"""SOC metadata helpers for lookup enrichment.
-
-This module provides an in-code SOC metadata model, mirroring SIC's
-in-library metadata approach and avoiding Excel/config startup dependency.
-"""
+"""SOC metadata helpers for lookup enrichment."""
 
 SOC_META: dict[str, dict[str, object]] = {
     "1": {
@@ -109,19 +105,13 @@ SOC_META: dict[str, dict[str, object]] = {
 
 
 class SocMeta:  # pylint: disable=too-few-public-methods
-    """In-code SOC metadata lookup."""
+    """In-memory SOC metadata lookup, aligned with SIC pattern."""
 
     def __init__(self):
         self.soc_meta = SOC_META
 
-    def get_meta_by_code(self, code: str, allow_parent_fallback: bool = True) -> dict:
-        """Retrieve title and details for a given SOC code.
-
-        Args:
-            code: SOC code to resolve.
-            allow_parent_fallback: If True, progressively trims trailing
-                digits until a parent-group entry is found.
-        """
+    def get_meta_by_code(self, code: str) -> dict:
+        """Retrieve title and details for a given SOC code."""
         entry = self.soc_meta.get(code)
         if entry is not None:
             return {
@@ -131,20 +121,16 @@ class SocMeta:  # pylint: disable=too-few-public-methods
                 "entry_routes_and_quals": entry.get("entry_routes_and_quals", ""),
                 "tasks": entry.get("tasks", []),
             }
-
-        if allow_parent_fallback:
-            lookup = code[:-1]
-            while lookup:
-                entry = self.soc_meta.get(lookup)
-                if entry is not None:
-                    return {
-                        "code": lookup,
-                        "group_title": entry.get("group_title", ""),
-                        "group_description": entry.get("group_description", ""),
-                        "entry_routes_and_quals": entry.get(
-                            "entry_routes_and_quals", ""
-                        ),
-                        "tasks": entry.get("tasks", []),
-                    }
-                lookup = lookup[:-1]
+        lookup = code[:-1]
+        while lookup:
+            entry = self.soc_meta.get(lookup)
+            if entry is not None:
+                return {
+                    "code": lookup,
+                    "group_title": entry.get("group_title", ""),
+                    "group_description": entry.get("group_description", ""),
+                    "entry_routes_and_quals": entry.get("entry_routes_and_quals", ""),
+                    "tasks": entry.get("tasks", []),
+                }
+            lookup = lookup[:-1]
         return {"error": f"No metadata found for SOC code {code}"}
