@@ -25,12 +25,12 @@ UNIT_CODE_LEN = 4
 
 
 def _normalise_lookup_dataframe(data: pd.DataFrame) -> pd.DataFrame:
-    text_col = "documents"
+    text_col = "description"
     code_col = "label"
     if text_col not in data.columns or code_col not in data.columns:
         raise ValueError(
             "SOCLookup CSV missing required columns. "
-            "Expected columns ['documents', 'label']."
+            "Expected columns ['description', 'label']."
         )
     out = data[[text_col, code_col]].copy()
     out = out.rename(columns={text_col: "description", code_col: "label"})
