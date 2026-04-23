@@ -126,6 +126,28 @@ def test_lookup_no_match(soc_lookup_fixture):
     assert result["code_major_group_meta"] is None
 
 
+def test_lookup_uses_parent_fallback_for_missing_unit_meta(tmp_path):
+    """Lookup falls back to parent metadata when unit-level metadata is missing."""
+    data = pd.DataFrame(
+        {
+            "description": ["software programmer"],
+            "label": ["2136"],
+        }
+    )
+    file_path = tmp_path / "mock_soc_data_2136.csv"
+    data.to_csv(file_path, index=False)
+
+    lookup = SOCLookup(data_path=str(file_path))
+    result = lookup.lookup("software programmer")
+
+    assert result["code"] == "2136"
+    assert result["code_meta"] is not None
+    assert result["code_meta"]["code"] == "2"
+    assert result["code_major_group"] == "2"
+    assert result["code_major_group_meta"] is not None
+    assert result["code_major_group_meta"]["code"] == "2"
+
+
 def test_lookup_similarity(soc_lookup_fixture):
     """Tests lookup with similarity enabled (mirrors SIC test_lookup_similarity)."""
     result = soc_lookup_fixture.lookup("fraud", similarity=True)
@@ -249,8 +271,8 @@ def test_soc_rephrase_process_json_null_soc_code(soc_rephrase_lookup_fixture):
     assert result["soc_description"] is None
 
 
-def test_soc_rephrase_lookup_supports_alias_columns(tmp_path):
-    """SOC rephrase lookup accepts common alias column names."""
+def test_soc_rephrase_lookup_rejects_alias_columns(tmp_path):
+    """SOC rephrase lookup rejects legacy alias column names."""
     data = pd.DataFrame(
         {
             "code": ["1139"],
@@ -260,11 +282,5 @@ def test_soc_rephrase_lookup_supports_alias_columns(tmp_path):
     file_path = tmp_path / "mock_rephrase_soc_alias_data.csv"
     data.to_csv(file_path, index=False)
 
-    lookup = SOCRephraseLookup(data_path=str(file_path))
-    result = lookup.lookup("1139")
-
-    assert result["soc_code"] == "1139"
-    assert (
-        result["rephrased_description"]
-        == "Functional managers and directors other roles"
-    )
+    with pytest.raises(ValueError, match="Expected columns"):
+        SOCRephraseLookup(data_path=str(file_path))
