@@ -130,7 +130,7 @@ def test_lookup_uses_parent_fallback_for_missing_unit_meta(tmp_path):
     """Lookup falls back to parent metadata when unit-level metadata is missing."""
     data = pd.DataFrame(
         {
-            "description": ["software programmer"],
+            "description": ["farm hand"],
             "label": ["2136"],
         }
     )
@@ -138,7 +138,7 @@ def test_lookup_uses_parent_fallback_for_missing_unit_meta(tmp_path):
     data.to_csv(file_path, index=False)
 
     lookup = SOCLookup(data_path=str(file_path))
-    result = lookup.lookup("software programmer")
+    result = lookup.lookup("farm hand")
 
     assert result["code"] == "2136"
     assert result["code_meta"] is not None
