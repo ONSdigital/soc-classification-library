@@ -104,7 +104,11 @@ class SOCLookup:
         if matching_code:
             matching_code_major_group = matching_code[:1]
             if self.meta is not None:
-                matching_code_meta = self.meta.get_meta_by_code(matching_code)
+                matching_code_meta = self.meta.get_meta_by_code(
+                    matching_code, allow_parent_fallback=False
+                )
+                if "error" in matching_code_meta:
+                    matching_code_meta = None
                 major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
 
         if not matching_code:
