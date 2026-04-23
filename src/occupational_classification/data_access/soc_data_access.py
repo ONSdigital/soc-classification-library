@@ -1,6 +1,6 @@
 """SOC data access for lookup CSVs and packaged ONS SOC2020 workbooks.
 
-Lookup flows (``SOCLookup``) use CSV paths with ``documents`` and ``label`` columns.
+Lookup flows (``SOCLookup``) use CSV paths with ``description`` and ``label`` columns.
 
 Hierarchy and embedding flows (``soc-classification-utils``) use packaged Excel
 workbooks via ``(package_name, filename)`` tuples, matching the previous utils
@@ -31,12 +31,12 @@ def _require_lookup_csv(path: str) -> None:
 
 
 def _resolve_lookup_columns(df: pd.DataFrame) -> tuple[str, str]:
-    text_col = "documents"
+    text_col = "description"
     code_col = "label"
     if text_col not in df.columns or code_col not in df.columns:
         raise ValueError(
             "Lookup CSV missing required columns. "
-            "Expected columns ['documents', 'label']."
+            "Expected columns ['description', 'label']."
         )
     return text_col, code_col
 
@@ -106,7 +106,7 @@ def load_soc_index(source: SocIndexSource) -> pd.DataFrame:
     """Load SOC index rows as ``code`` and ``title``.
 
     Args:
-        source: Either a path to a lookup CSV (``documents``, ``label``), or a
+        source: Either a path to a lookup CSV (``description``, ``label``), or a
             ``(package_name, xlsx_filename)`` tuple for the ONS coding index workbook.
 
     Returns:
