@@ -13,7 +13,7 @@ from src.occupational_classification.data_access import soc_data_access
 def test_load_soc_index_lookup_csv(tmp_path):
     csv_path = tmp_path / "lookup.csv"
     csv_path.write_text(
-        "documents,label\nprimary teacher,2314\n",
+        "description,label\nprimary teacher,2314\n",
         encoding="utf-8",
     )
     df = soc_data_access.load_soc_index(str(csv_path))
@@ -26,7 +26,7 @@ def test_load_soc_index_lookup_csv(tmp_path):
 def test_load_soc_index_rejects_legacy_columns(tmp_path):
     csv_path = tmp_path / "lookup.csv"
     csv_path.write_text(
-        "description,label\nprimary teacher,2314\n",
+        "documents,label\nprimary teacher,2314\n",
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="Expected columns"):
@@ -43,7 +43,7 @@ def test_load_soc_index_rejects_non_csv(tmp_path):
 def test_load_soc_index_drops_non_numeric_labels(tmp_path):
     csv_path = tmp_path / "lookup.csv"
     csv_path.write_text(
-        "documents,label\na,2314\nb,abc\n",
+        "description,label\na,2314\nb,abc\n",
         encoding="utf-8",
     )
     df = soc_data_access.load_soc_index(str(csv_path))
@@ -56,7 +56,7 @@ def test_load_soc_index_drops_non_numeric_labels(tmp_path):
 def test_load_soc_index_dropna(tmp_path):
     csv_path = tmp_path / "lookup.csv"
     csv_path.write_text(
-        "documents,label\nx,2314\n,2324\ny,\n",
+        "description,label\nx,2314\n,2324\ny,\n",
         encoding="utf-8",
     )
     df = soc_data_access.load_soc_index(str(csv_path))
@@ -69,7 +69,7 @@ def test_load_soc_index_dropna(tmp_path):
 def test_load_soc_structure_from_lookup_csv(tmp_path):
     csv_path = tmp_path / "lookup.csv"
     csv_path.write_text(
-        "documents,label\nx,2314\n",
+        "description,label\nx,2314\n",
         encoding="utf-8",
     )
     df = soc_data_access.load_soc_structure(str(csv_path))
@@ -79,7 +79,7 @@ def test_load_soc_structure_from_lookup_csv(tmp_path):
 def test_load_soc_structure_rejects_non_label_code_column(tmp_path):
     csv_path = tmp_path / "lookup.csv"
     csv_path.write_text(
-        "ids,documents,soc_code\n0,x,2314\n",
+        "ids,description,soc_code\n0,x,2314\n",
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="Expected columns"):
