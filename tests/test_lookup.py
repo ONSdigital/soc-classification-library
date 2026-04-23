@@ -25,7 +25,7 @@ def mock_data(tmp_path):
     data = pd.DataFrame(
         {
             "label": ["4111", "8139", "1131", "2112"],
-            "documents": [
+            "description": [
                 "benefits fraud investigator (government)",
                 "saw doctor",
                 "vice president (banking)",
@@ -157,10 +157,10 @@ def test_soc_lookup_rejects_non_csv_path(tmp_path):
         SOCLookup(data_path=str(fake_path))
 
 
-def test_soc_lookup_rejects_legacy_description_column(tmp_path):
+def test_soc_lookup_rejects_legacy_documents_column(tmp_path):
     data = pd.DataFrame(
         {
-            "description": ["primary teacher", "zoologist"],
+            "documents": ["primary teacher", "zoologist"],
             "label": ["2314", "2112"],
         }
     )
