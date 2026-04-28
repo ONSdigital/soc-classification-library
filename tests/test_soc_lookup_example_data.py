@@ -44,3 +44,14 @@ def test_soc_lookup_example_similarity():
     potential = result["potential_matches"]
     assert potential["descriptions_count"] >= 1
     assert any("managers" in desc for desc in potential["descriptions"])
+
+
+def test_soc_lookup_example_absent_description_returns_null_code():
+    """Absent descriptions should return a null code rather than raising."""
+    csv_path = _get_example_csv_path()
+    lookup = SOCLookup(data_path=csv_path)
+
+    result = lookup.lookup("orchard planner")
+
+    assert result["description"] == "orchard planner"
+    assert result["code"] is None
