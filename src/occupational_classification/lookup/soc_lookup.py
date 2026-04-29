@@ -89,7 +89,9 @@ class SOCLookup:
             return None
         return meta
 
-    def lookup(self, description: str, similarity: bool = False) -> dict[str, Any]:
+    def lookup(  # pylint: disable=too-many-locals
+        self, description: str, similarity: bool = False
+    ) -> dict[str, Any]:
         """Looks up an SOC code based on the given description.
 
         Args:
@@ -300,4 +302,3 @@ class SOCRephraseLookup:
                 ]
 
         return input_json
-
