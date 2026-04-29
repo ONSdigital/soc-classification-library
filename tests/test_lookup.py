@@ -84,6 +84,10 @@ def test_lookup(soc_lookup_fixture, description, expected_code, expected_major_g
     # With always-on SocMeta, code_meta and major-group meta should be populated
     assert result["code_meta"] is not None
     assert result["code_major_group_meta"] is not None
+    assert result["code_minor_group"] == expected_code[:3]
+    assert result["code_sub_major_group"] == expected_code[:2]
+    assert result["code_minor_group_meta"] is not None
+    assert result["code_sub_major_group_meta"] is not None
 
 
 @pytest.mark.parametrize(
@@ -123,11 +127,15 @@ def test_lookup_no_match(soc_lookup_fixture):
     assert result["code"] is None
     # When there is no matching code, meta should also be None.
     assert result["code_meta"] is None
+    assert result["code_minor_group"] is None
+    assert result["code_minor_group_meta"] is None
+    assert result["code_sub_major_group"] is None
+    assert result["code_sub_major_group_meta"] is None
     assert result["code_major_group_meta"] is None
 
 
-def test_lookup_uses_parent_fallback_for_missing_unit_meta(tmp_path):
-    """Lookup falls back to parent metadata when unit-level metadata is missing."""
+def test_lookup_returns_unit_level_meta_when_present(tmp_path):
+    """Lookup returns unit-level metadata when the code exists in SOC metadata."""
     data = pd.DataFrame(
         {
             "description": ["farm hand"],
@@ -142,10 +150,14 @@ def test_lookup_uses_parent_fallback_for_missing_unit_meta(tmp_path):
 
     assert result["code"] == "2136"
     assert result["code_meta"] is not None
-    assert result["code_meta"]["code"] == "2"
+    assert result["code_meta"]["code"] == "2136"
     assert result["code_major_group"] == "2"
     assert result["code_major_group_meta"] is not None
     assert result["code_major_group_meta"]["code"] == "2"
+    assert result["code_minor_group"] == "213"
+    assert result["code_sub_major_group"] == "21"
+    assert result["code_minor_group_meta"] is not None
+    assert result["code_sub_major_group_meta"] is not None
 
 
 def test_lookup_similarity(soc_lookup_fixture):
