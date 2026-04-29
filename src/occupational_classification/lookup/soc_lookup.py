@@ -82,6 +82,13 @@ class SOCLookup:
             "label"
         ]
 
+    @staticmethod
+    def _normalise_meta(meta: dict[str, Any]) -> Optional[dict[str, Any]]:
+        """Return metadata dict or None when lookup reports an error."""
+        if "error" in meta:
+            return None
+        return meta
+
     def lookup(self, description: str, similarity: bool = False) -> dict[str, Any]:
         """Looks up an SOC code based on the given description.
 
@@ -97,17 +104,33 @@ class SOCLookup:
 
         matching_code: Optional[str] = self.lookup_dict.get(description)
         matching_code_meta: Optional[dict[str, Any]] = None
+        minor_group_meta: Optional[dict[str, Any]] = None
+        sub_major_group_meta: Optional[dict[str, Any]] = None
         major_group_meta: Optional[dict[str, Any]] = None
 
-        # Extract the first digit of the code as code_major_group
+        # Extract SOC hierarchy segments.
+        matching_code_minor_group: Optional[str] = None
+        matching_code_sub_major_group: Optional[str] = None
         matching_code_major_group: Optional[str] = None
         if matching_code:
+            if len(matching_code) == UNIT_CODE_LEN:
+                matching_code_minor_group = matching_code[:3]
+                matching_code_sub_major_group = matching_code[:2]
             matching_code_major_group = matching_code[:1]
             if self.meta is not None:
                 matching_code_meta = self.meta.get_meta_by_code(matching_code)
-                if "error" in matching_code_meta:
-                    matching_code_meta = None
-                major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
+                matching_code_meta = self._normalise_meta(matching_code_meta)
+                if matching_code_minor_group is not None:
+                    minor_group_meta = self._normalise_meta(
+                        self.meta.get_meta_by_code_exact(matching_code_minor_group)
+                    )
+                if matching_code_sub_major_group is not None:
+                    sub_major_group_meta = self._normalise_meta(
+                        self.meta.get_meta_by_code_exact(matching_code_sub_major_group)
+                    )
+                major_group_meta = self._normalise_meta(
+                    self.meta.get_meta_by_code(matching_code_major_group)
+                )
 
         if not matching_code:
             matching_code = None
@@ -149,6 +172,10 @@ class SOCLookup:
             "description": description,
             "code": matching_code,
             "code_meta": matching_code_meta,
+            "code_minor_group": matching_code_minor_group,
+            "code_minor_group_meta": minor_group_meta,
+            "code_sub_major_group": matching_code_sub_major_group,
+            "code_sub_major_group_meta": sub_major_group_meta,
             "code_major_group": matching_code_major_group,
             "code_major_group_meta": major_group_meta,
         }
