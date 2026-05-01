@@ -34,8 +34,9 @@ def _normalise_lookup_dataframe(data: pd.DataFrame) -> pd.DataFrame:
         )
     out = data[[text_col, code_col]].copy()
     out = out.rename(columns={text_col: "description", code_col: "label"})
-    out["description"] = out["description"].astype(str).str.strip().str.lower()
-    out["label"] = out["label"].astype(str).str.strip()
+    # Match SICLookup: lower-case descriptions only (no strip on load or lookup).
+    out["description"] = out["description"].astype(str).str.lower()
+    out["label"] = out["label"].astype(str)
     out = out.dropna(subset=["description", "label"])
     return out
 
