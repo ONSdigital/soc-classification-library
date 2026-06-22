@@ -121,8 +121,9 @@ class SOCLookup:
                 matching_code_sub_major_group = matching_code[:2]
             matching_code_major_group = matching_code[:1]
             if self.meta is not None:
-                matching_code_meta = self.meta.get_meta_by_code(matching_code)
-                matching_code_meta = self._normalise_meta(matching_code_meta)
+                matching_code_meta = self._normalise_meta(
+                    self.meta.get_meta_by_code_exact(matching_code)
+                )
                 if matching_code_minor_group is not None:
                     minor_group_meta = self._normalise_meta(
                         self.meta.get_meta_by_code_exact(matching_code_minor_group)
@@ -132,7 +133,7 @@ class SOCLookup:
                         self.meta.get_meta_by_code_exact(matching_code_sub_major_group)
                     )
                 major_group_meta = self._normalise_meta(
-                    self.meta.get_meta_by_code(matching_code_major_group)
+                    self.meta.get_meta_by_code_exact(matching_code_major_group)
                 )
 
         if not matching_code:
@@ -156,7 +157,9 @@ class SOCLookup:
                 major_groups = [
                     {
                         "code": major_group_code,
-                        "meta": self.meta.get_meta_by_code(major_group_code),
+                        "meta": self._normalise_meta(
+                            self.meta.get_meta_by_code_exact(major_group_code)
+                        ),
                     }
                     for major_group_code in major_group_codes
                 ]
@@ -199,7 +202,9 @@ class SOCLookup:
         matching_code_major_group: Optional[str] = code[:1] if code else None
         major_group_meta: Optional[dict[str, Any]] = None
         if self.meta is not None and matching_code_major_group is not None:
-            major_group_meta = self.meta.get_meta_by_code(matching_code_major_group)
+            major_group_meta = self._normalise_meta(
+                self.meta.get_meta_by_code_exact(matching_code_major_group)
+            )
         return {
             "code_major_group": matching_code_major_group,
             "code_major_group_meta": major_group_meta,
