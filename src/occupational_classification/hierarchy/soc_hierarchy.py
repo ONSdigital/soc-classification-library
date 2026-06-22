@@ -243,8 +243,11 @@ def _define_codes_and_nodes(soc_df: pd.DataFrame):
     code_node_dict = {}
 
     for code in soc_df["code"]:
-        group_description = soc_meta.get_meta_by_code(code)["group_description"]
-        group_title = soc_meta.get_meta_by_code(code)["group_title"]
+        meta = soc_meta.get_meta_by_code_exact(code)
+        group_description = (
+            meta.get("group_description", "") if "error" not in meta else ""
+        )
+        group_title = meta.get("group_title", "") if "error" not in meta else ""
         soc_node = SocNode(
             code, group_title=group_title, group_description=group_description
         )
@@ -270,11 +273,13 @@ def _populate_tasks_and_quals(nodes: list):
     for node in nodes:
         code = node.soc_code
         if SocCode(code).code_length() == _SOC_CODE_LENGTH:
-            qual = soc_meta.get_meta_by_code(code)["entry_routes_and_quals"]
-            node.qualifications = qual
-
-            tasks_list = soc_meta.get_meta_by_code(code)["tasks"]
-            node.tasks = tasks_list
+            meta = soc_meta.get_meta_by_code_exact(code)
+            if "error" in meta:
+                node.qualifications = ""
+                node.tasks = []
+            else:
+                node.qualifications = meta.get("entry_routes_and_quals", "")
+                node.tasks = meta.get("tasks", [])
 
 
 def _populate_job_titles(nodes: list, soc_index: pd.DataFrame):
