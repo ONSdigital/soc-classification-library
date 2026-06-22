@@ -4171,35 +4171,10 @@ class SocMeta:  # pylint: disable=too-few-public-methods
         self.soc_meta = SOCmeta
 
     def get_meta_by_code(self, code: str) -> dict:
-        """Retrieve metadata for a given SOC code with parent fallback."""
-        entry = self.soc_meta.get(code)
-        if entry is not None:
-            return {
-                "code": code,
-                "group_title": entry.get("group_title", ""),
-                "group_description": entry.get("group_description", ""),
-                "entry_routes_and_quals": entry.get("entry_routes_and_quals", ""),
-                "tasks": entry.get("tasks", []),
-            }
-        lookup = code[:-1]
-        while lookup:
-            entry = self.soc_meta.get(lookup)
-            if entry is not None:
-                return {
-                    "code": lookup,
-                    "group_title": entry.get("group_title", ""),
-                    "group_description": entry.get("group_description", ""),
-                    "entry_routes_and_quals": entry.get("entry_routes_and_quals", ""),
-                    "tasks": entry.get("tasks", []),
-                }
-            lookup = lookup[:-1]
-        return {"error": f"No metadata found for SOC code {code}"}
-
-    def get_meta_by_code_exact(self, code: str) -> dict:
-        """Retrieve metadata only for an exact SOC code match."""
+        """Retrieve metadata for an exact SOC code match only."""
         entry = self.soc_meta.get(code)
         if entry is None:
-            return {"error": f"No exact metadata found for SOC code {code}"}
+            return {"error": f"No metadata found for SOC code {code}"}
         return {
             "code": code,
             "group_title": entry.get("group_title", ""),
@@ -4207,3 +4182,7 @@ class SocMeta:  # pylint: disable=too-few-public-methods
             "entry_routes_and_quals": entry.get("entry_routes_and_quals", ""),
             "tasks": entry.get("tasks", []),
         }
+
+    def get_meta_by_code_exact(self, code: str) -> dict:
+        """Retrieve metadata only for an exact SOC code match."""
+        return self.get_meta_by_code(code)
