@@ -180,6 +180,26 @@ def test_soc_lookup_default_path_uses_example_csv():
     result = lookup.lookup("chief executives and senior officials")
     assert result["code"] == "1111"
     assert result["code_major_group"] == "1"
+    assert result["code_meta"] is not None
+    assert result["code_meta"]["code"] == "1111"
+
+
+def test_lookup_returns_null_code_meta_when_metadata_missing(tmp_path):
+    """Lookup returns null code_meta when the matched code has no SOC metadata."""
+    data = pd.DataFrame(
+        {
+            "description": ["unknown occupation"],
+            "label": ["9999"],
+        }
+    )
+    file_path = tmp_path / "mock_soc_data_missing_meta.csv"
+    data.to_csv(file_path, index=False)
+
+    lookup = SOCLookup(data_path=str(file_path))
+    result = lookup.lookup("unknown occupation")
+
+    assert result["code"] == "9999"
+    assert result["code_meta"] is None
 
 
 def test_soc_lookup_rejects_non_csv_path(tmp_path):
